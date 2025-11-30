@@ -3,41 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CricZone - Home</title>
+    <title>CricZone - Live Cricket Scores & News</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
 
     <nav class="navbar">
-        <a href="index.html" class="logo-link"><div class="logo">CRIC<span>ZONE</span></div></a>
-        <div class="nav-links">
-            <a href="index.html" class="active">Live Scores</a>
-            <a href="rankings.html">Rankings</a>
-            <a href="stats.html" class="btn-cta">Stats Database ↗</a>
+        <a href="index.html" class="logo">CRIC<span>ZONE</span></a>
+        <div class="nav-menu">
+            <span class="nav-link">Live Scores</span>
+            <span class="nav-link">Series</span>
+            <span class="nav-link">Teams</span>
+            <span class="nav-link">News</span>
+            <a href="stats.html" class="nav-link" style="color:#fff; border:1px solid #fff; padding:5px 10px; border-radius:4px;">Stats Database</a>
         </div>
+        <div style="color:white; font-size:18px;"><i class="fas fa-search"></i></div>
     </nav>
 
-    <div class="container">
-        <div class="section-header">
-            <h2>Live Matches</h2>
-            <span style="color:#3b94fd; font-size:12px; cursor:pointer;">View All ></span>
+    <div class="match-strip">
+        <div class="mini-card live">
+            <span class="series-title">1st Test • Perth • LIVE</span>
+            <div class="team-row">
+                <span>🇮🇳 IND</span> <span class="score">320/4</span>
+            </div>
+            <div class="team-row">
+                <span>🇦🇺 AUS</span> <span class="score">177</span>
+            </div>
+            <span class="status">India lead by 143 runs</span>
         </div>
 
-        <div class="matches-scroller">
-            <div class="match-card live">
-                <div style="font-size:11px; color:#888; margin-bottom:10px;">IND vs AUS • 1st Test</div>
-                <div class="team-score"><span>🇮🇳 IND</span> <span>320/4</span></div>
-                <div class="team-score"><span>🇦🇺 AUS</span> <span>177</span></div>
-                <div class="match-status">India lead by 143 runs</div>
+        <div class="mini-card">
+            <span class="series-title">2nd ODI • Cape Town • RESULT</span>
+            <div class="team-row">
+                <span>🇿🇦 SA</span> <span class="score">287/8</span>
+            </div>
+            <div class="team-row">
+                <span>🏴󠁧󠁢󠁥󠁮󠁧󠁿 ENG</span> <span class="score">240</span>
+            </div>
+            <span class="status">South Africa won by 47 runs</span>
+        </div>
+
+        <div class="mini-card">
+            <span class="series-title">IPL 2025 • Match 1 • UPCOMING</span>
+            <div class="team-row">
+                <span>🦁 CSK</span> <span class="score">-</span>
+            </div>
+            <div class="team-row">
+                <span>🔵 MI</span> <span class="score">-</span>
+            </div>
+            <span class="status">Starts Tomorrow, 7:30 PM</span>
+        </div>
+        
+        <div class="mini-card">
+            <span class="series-title">PSL • Final • RESULT</span>
+            <div class="team-row">
+                <span>LAHQ</span> <span class="score">200/3</span>
+            </div>
+            <div class="team-row">
+                <span>MUL</span> <span class="score">198/9</span>
+            </div>
+            <span class="status">Lahore won by 2 runs</span>
+        </div>
+    </div>
+
+    <div class="main-container">
+        
+        <div class="content-area">
+            <div class="featured-news">
+                                <img src="https://img1.hscicdn.com/image/upload/f_auto,t_ds_w_1200,q_50/lsci/db/PICTURES/CMS/370500/370560.jpg" class="hero-img">
+                <div class="news-content">
+                    <span class="news-tag">Border-Gavaskar Trophy</span>
+                    <div class="headline">King Kohli Silences Critics with Majestic 80th Century in Perth</div>
+                    <p class="summary">Virat Kohli produced a masterclass on a spicy Perth wicket, guiding India to a commanding position on Day 2 against Australia.</p>
+                </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:20px;">
+                <div class="sidebar-widget">
+                    <div class="news-tag">IPL Auction</div>
+                    <div class="headline" style="font-size:18px;">Rishabh Pant breaks all records, sold for ₹27 Cr</div>
+                </div>
+                <div class="sidebar-widget">
+                    <div class="news-tag">Analysis</div>
+                    <div class="headline" style="font-size:18px;">Why Bumrah is the greatest captain India never had</div>
+                </div>
             </div>
         </div>
 
-        <div style="background: linear-gradient(45deg, #111, #1f2a36); padding: 30px; border-radius: 10px; margin: 30px 0; border: 1px solid #333; text-align:center;">
-            <h1>CricZone Database</h1>
-            <p style="color:#888;">Access detailed records of all players.</p>
-            <br>
-            <a href="stats.html" style="background:#3b94fd; color:black; padding:10px 25px; text-decoration:none; font-weight:bold; border-radius:50px;">Open Database</a>
+        <div class="right-sidebar">
+            
+            <div class="sidebar-widget">
+                <div class="widget-title">Quick Stats</div>
+                <a href="stats.html" class="quick-link">
+                    <span>Most Runs (Test)</span> <i class="fas fa-chevron-right arrow"></i>
+                </a>
+                <a href="stats.html" class="quick-link">
+                    <span>Purple Cap List</span> <i class="fas fa-chevron-right arrow"></i>
+                </a>
+                <a href="stats.html" class="quick-link">
+                    <span>ICC Team Rankings</span> <i class="fas fa-chevron-right arrow"></i>
+                </a>
+                <div style="margin-top:15px; text-align:center;">
+                    <a href="stats.html" style="color:var(--primary); font-weight:bold; font-size:13px;">View Full Database</a>
+                </div>
+            </div>
+
+            <div class="sidebar-widget">
+                <div class="widget-title">Must Watch</div>
+                <img src="https://img1.hscicdn.com/image/upload/f_auto,t_ds_w_1280,q_80/lsci/db/PICTURES/CMS/353400/353429.jpg" style="width:100%; border-radius:8px; margin-bottom:10px;">
+                <div style="font-weight:bold; font-size:14px;">Top 10 Sixes of the Month</div>
+                <div style="color:#888; font-size:12px;">Duration: 4:20</div>
+            </div>
+
         </div>
     </div>
+
 </body>
 </html>
