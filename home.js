@@ -1,94 +1,94 @@
-/* --- home.js : PROXY FIXED LIVE SCORES --- */
+/* --- home.js : THE ESPN RSS TRICK (No API Key Needed) --- */
 
-const API_KEY = "f42f69a8-02ca-4650-a69b-484c22879c80"; 
-
-// ✅ PROXY URL (Ye CORS error ko bypass karega)
-const PROXY = "https://api.allorigins.win/raw?url=";
-const TARGET_URL = `https://api.cricapi.com/v1/currentMatches?apikey=${API_KEY}&offset=0`;
+// ✅ MAGIC LINK (ESPN ka Data -> JSON me convert karke layega)
+const FEED_URL = "https://api.rss2json.com/v1/api.json?rss_url=http://static.cricinfo.com/rss/livescores.xml";
 
 async function loadLiveScores() {
     const strip = document.querySelector('.match-strip');
     
-    // Loading Indicator
-    strip.innerHTML = '<div style="color:#e1b12c; padding:20px; font-weight:bold; font-size:14px;">📡 Establishing Secure Connection...</div>';
+    // Loading Animation
+    strip.innerHTML = '<div style="color:#00ff88; padding:20px; font-weight:bold;">📡 Hacking ESPN Data...</div>';
 
     try {
-        // Proxy ke through call karo
-        const response = await fetch(PROXY + encodeURIComponent(TARGET_URL));
+        const response = await fetch(FEED_URL);
         const json = await response.json();
 
-        // Check if Data exists
-        if (json.status !== "success" || !json.data) {
-            console.error("API Issue:", json);
-            // Agar API fail hui, to Error dikhao (Demo nahi, taaki pata chale issue kya hai)
-            strip.innerHTML = `<div style="color:#ff4444; padding:20px; font-size:12px;">
-                API Error: ${json.status || "Limit Exceeded"}. <br>Try again tomorrow or use new Key.
-            </div>`;
+        // Agar data nahi aaya
+        if (!json.items) {
+            strip.innerHTML = '<div style="color:red; padding:20px;">No Live Matches found via Feed.</div>';
             return;
         }
 
         strip.innerHTML = ""; // Clear Loading
         
-        // Sirf wahi match dikhao jo chalu hain ya abhi khatam huye
-        // Aur faltu matches filter karo
-        const matches = json.data.filter(m => m.name.length < 50).slice(0, 10);
-
-        if(matches.length === 0) {
-            strip.innerHTML = '<div style="color:#aaa; padding:20px;">No International Matches Live right now.</div>';
-            return;
-        }
+        // ESPN ke feed me bahut saare match hote hain, top 10 uthao
+        const matches = json.items.slice(0, 10);
 
         matches.forEach(match => {
-            // Logic
-            let isLive = match.matchStarted && !match.matchEnded;
-            let liveClass = isLive ? 'live' : '';
-            let statusColor = isLive ? '#00ff88' : '#aaa'; 
+            // --- DATA PARSING (Trick to separate Score from Title) ---
+            // Title format usually: "IND 320/4 v AUS 177" OR "CSK v MI"
+            let title = match.title;
+            let status = match.description; // Example: "India lead by 143 runs"
             
-            // Score Handling
-            let t1 = match.teamInfo && match.teamInfo[0] ? match.teamInfo[0].shortname : "T1";
-            let t2 = match.teamInfo && match.teamInfo[1] ? match.teamInfo[1].shortname : "T2";
-            let img1 = match.teamInfo && match.teamInfo[0] ? match.teamInfo[0].img : "";
-            let img2 = match.teamInfo && match.teamInfo[1] ? match.teamInfo[1].img : "";
-            
-            let s1 = "-";
-            let s2 = "-";
+            // Teams aur Score alag karne ki koshish
+            let parts = title.split(' v ');
+            let t1 = "Team A", s1 = "-";
+            let t2 = "Team B", s2 = "-";
 
-            if (match.score) {
-                match.score.forEach(inning => {
-                    if (inning.inning.includes(match.teamInfo[0].name)) s1 = `${inning.r}/${inning.w} <span style="font-size:10px; color:#888;">(${inning.o})</span>`;
-                    if (inning.inning.includes(match.teamInfo[1].name)) s2 = `${inning.r}/${inning.w} <span style="font-size:10px; color:#888;">(${inning.o})</span>`;
-                });
+            if (parts.length === 2) {
+                // Team 1 Data
+                let leftSide = parts[0].trim(); // e.g. "IND 320/4"
+                let lastSpace1 = leftSide.lastIndexOf(' ');
+                if(lastSpace1 > 0 && /\d/.test(leftSide)) { // Agar score (number) hai
+                    t1 = leftSide.substring(0, lastSpace1);
+                    s1 = leftSide.substring(lastSpace1);
+                } else {
+                    t1 = leftSide;
+                    s1 = "-";
+                }
+
+                // Team 2 Data
+                let rightSide = parts[1].replace('*', '').trim(); // Remove * symbol
+                let lastSpace2 = rightSide.lastIndexOf(' ');
+                if(lastSpace2 > 0 && /\d/.test(rightSide)) {
+                    t2 = rightSide.substring(0, lastSpace2);
+                    s2 = rightSide.substring(lastSpace2);
+                } else {
+                    t2 = rightSide;
+                    s2 = "-";
+                }
+            } else {
+                t1 = title; // Fallback agar format alag ho
             }
 
+            // Live Check (Agar '*' hai title me ya description me 'Live' hai)
+            let isLive = title.includes('*') || status.toLowerCase().includes('live');
+            let borderClass = isLive ? 'live' : '';
+            let statusColor = isLive ? '#00ff88' : '#aaa'; 
+            let liveBadge = isLive ? '<span class="blink-dot"></span> LIVE' : 'MATCH CENTER';
+
+            // --- HTML CARD ---
             let card = `
-            <div class="mini-card ${liveClass}">
+            <div class="mini-card ${borderClass}">
                 <div style="display:flex; justify-content:space-between; margin-bottom:10px; border-bottom:1px solid #333; padding-bottom:5px;">
-                    <span style="font-size:10px; color:#aaa; font-weight:bold; text-transform:uppercase; max-width:150px; overflow:hidden; white-space:nowrap;">
-                        ${match.matchType ? match.matchType.toUpperCase() : 'MATCH'}
-                    </span>
+                    <span style="font-size:10px; color:#aaa; font-weight:bold; text-transform:uppercase;">MATCH UPDATE</span>
                     <span style="font-size:10px; color:${isLive ? '#ff4444' : '#ccc'}; font-weight:bold;">
-                        ${isLive ? '● LIVE' : match.status}
+                        ${liveBadge}
                     </span>
                 </div>
                 
                 <div style="display:flex; justify-content:space-between; margin-top:5px; font-weight:bold; font-size:14px;">
-                    <div style="display:flex; align-items:center; gap:8px;">
-                        <img src="${img1}" style="width:20px; height:20px; border-radius:50%; object-fit:cover;" onerror="this.style.display='none'">
-                        <span>${t1}</span>
-                    </div>
+                    <span style="color:#fff;">${t1}</span>
                     <span style="color:#fff;">${s1}</span>
                 </div>
 
                 <div style="display:flex; justify-content:space-between; margin-top:5px; font-weight:bold; font-size:14px;">
-                    <div style="display:flex; align-items:center; gap:8px;">
-                        <img src="${img2}" style="width:20px; height:20px; border-radius:50%; object-fit:cover;" onerror="this.style.display='none'">
-                        <span>${t2}</span>
-                    </div>
+                    <span style="color:#fff;">${t2}</span>
                     <span style="color:#fff;">${s2}</span>
                 </div>
 
                 <span style="font-size:11px; color:${statusColor}; display:block; margin-top:10px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
-                    ${match.status}
+                    ${status}
                 </span>
             </div>`;
             
@@ -97,13 +97,11 @@ async function loadLiveScores() {
 
     } catch (error) {
         console.error(error);
-        // Agar Proxy bhi fail ho, tabhi Demo dikhao
-        strip.innerHTML = '<div style="color:red; padding:20px;">Connection Error. Showing Demo Data...</div>';
-        renderDemoData(); // Fallback
+        strip.innerHTML = '<div style="color:red; padding:20px;">Feed Error.</div>';
     }
 }
 
-// --- NEWS SECTION ---
+// --- NEWS SECTION (High Quality Static) ---
 function loadNews() {
     const container = document.getElementById('news-container');
     if(!container) return;
@@ -130,19 +128,7 @@ function loadNews() {
     </div>`;
 }
 
-// Fallback Function (Agar API na chale to ye chalega)
-function renderDemoData() {
-    const strip = document.querySelector('.match-strip');
-    const demoHTML = `
-        <div class="mini-card live">
-            <span style="font-size:10px; color:#aaa;">DEMO MODE • API LIMIT REACHED</span>
-            <div style="display:flex; justify-content:space-between; margin-top:5px; font-weight:bold;"><span>IND</span> <span style="color:#fff;">320/4</span></div>
-            <div style="display:flex; justify-content:space-between; margin-top:5px; font-weight:bold;"><span>AUS</span> <span style="color:#fff;">177</span></div>
-            <span style="font-size:11px; color:#00ff88; margin-top:8px; display:block;">India lead by 143 runs</span>
-        </div>`;
-    strip.innerHTML = demoHTML;
-}
-
+// Start
 window.onload = function() {
     loadLiveScores();
     loadNews();
