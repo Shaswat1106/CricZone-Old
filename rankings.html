@@ -2,31 +2,68 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Rankings - CricZone</title>
-    <link rel="stylesheet" href="style.css">
+    <title>CricZone - ICC Rankings</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="style.css?v=11">
 </head>
 <body>
+
+    <!-- Navbar -->
     <nav class="navbar">
-        <a href="index.html">
-            <img src="logo.jpg" alt="CricZone" class="logo-img">
+        <a href="index.html" class="brand-box">
+            <img src="logo.jpg" alt="CricZone Logo" class="logo-img">
+            <div class="brand-name">CRIC<span>ZONE</span></div>
         </a>
         <div class="nav-links">
-            <a href="index.html">Home</a>
-            <a href="rankings.html" class="active">Rankings</a>
-            <a href="stats.html">Stats Database</a>
+            <a href="index.html">Live Scores</a>
+            <a href="#" class="active">Rankings</a>
+            <a href="news.html">News</a>
+            <a href="stats.html" class="btn-db">STATS DATABASE ↗</a>
         </div>
     </nav>
-    <div style="max-width:800px; margin:30px auto; padding:0 20px;">
-        <h2 style="color:white;">ICC Rankings</h2>
-        <div class="mini-card" style="margin-top:20px;">
-            <h3 style="color:#00ff88; border-bottom:1px solid #333; padding-bottom:10px;">TEST BATSMEN</h3>
-            <table style="width:100%; color:#fff; text-align:left;">
-                <tr style="color:#888;"><th>Pos</th><th>Player</th><th>Rating</th></tr>
-                <tr><td>1</td><td>Joe Root</td><td>899</td></tr>
-                <tr><td>2</td><td>Kane Williamson</td><td>859</td></tr>
-                <tr><td>3</td><td>Yashasvi Jaiswal</td><td>820</td></tr>
-            </table>
+
+    <!-- Main Rankings Container -->
+    <div style="max-width:900px; margin:40px auto; padding:0 20px;">
+
+        <h1 style="color:#fff; font-family:'Teko', sans-serif; font-size:48px;">
+            ICC Rankings
+        </h1>
+
+        <!-- Format Tabs -->
+        <div style="display:flex; gap:15px; margin-top:20px;">
+            <div class="mini-card format-tab active-tab" onclick="switchFormat('test')">TEST</div>
+            <div class="mini-card format-tab" onclick="switchFormat('odi')">ODI</div>
+            <div class="mini-card format-tab" onclick="switchFormat('t20')">T20I</div>
         </div>
-    </div>
-</body>
-</html>
+
+        <!-- Category Tabs -->
+        <div style="display:flex; gap:15px; margin:20px 0;">
+            <div class="mini-card category-tab active-tab" onclick="switchCategory('batsmen')">Batsmen</div>
+            <div class="mini-card category-tab" onclick="switchCategory('bowlers')">Bowlers</div>
+            <div class="mini-card category-tab" onclick="switchCategory('allrounder')">All-Rounders</div>
+        </div>
+
+        <!-- Rankings Data -->
+        <div id="rankings-box">
+            
+            <!-- TEST Batting Default -->
+            <div class="mini-card ranking-card">
+                <h3 style="color:#00ff88; margin-bottom:15px; font-size:20px;">
+                    TEST • Batsmen Rankings
+                </h3>
+
+                <div class="player-row">
+                    <span>1. Joe Root</span>
+                    <span class="rating">899</span>
+                </div>
+
+                <div class="player-row">
+                    <span>2. Kane Williamson</span>
+                    <span class="rating">859</span>
+                </div>
+
+                <div class="player-row">
+                    <span>3. Yashasvi Jaiswal</span>
+                    <span class="rating">820</span>
+                </div>
