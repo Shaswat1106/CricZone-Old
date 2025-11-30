@@ -1,6 +1,6 @@
-/* --- logic.js : Auto-Switching Table --- */
+/* --- logic.js : FINAL VERSION --- */
 
-// ⚠️ PASTE YOUR GOOGLE SHEET LINK HERE:
+// ✅ GOOGLE SHEET LINK:
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR7PduoezqweZgS1aT_Whp1zfLOfEUwA7D76Kmbhw7c9C6DF-GOwMukmhVMprtlh356CXuxvaGI4ShH/pub?output=csv";
 
 let database = [];
@@ -8,28 +8,30 @@ let currentView = 'runs'; // Default View
 
 async function init() {
     const tbody = document.getElementById('stats-body');
-    tbody.innerHTML = "<tr><td colspan='10' style='text-align:center; padding:50px; color:#00ff88;'>⚡ LOADNG DATA...</td></tr>";
+    tbody.innerHTML = "<tr><td colspan='10' style='text-align:center; padding:50px; color:#00ff88; font-weight:bold;'>⚡ CONNECTING TO LIVE DATABASE...</td></tr>";
 
     try {
         const response = await fetch(SHEET_URL);
         const dataText = await response.text();
         database = parseCSV(dataText);
-        applyFilters(); // Start
+        applyFilters(); 
     } catch (error) {
         console.error(error);
-        tbody.innerHTML = "<tr><td colspan='10' style='text-align:center; color:red;'>Data Error. Check Sheet Link.</td></tr>";
+        tbody.innerHTML = "<tr><td colspan='10' style='text-align:center; color:red;'>Data Error. Check Connection.</td></tr>";
     }
 }
 
+// ✅ CSV PARSER (Includes new 50s Column)
 function parseCSV(csvText) {
     const rows = csvText.split('\n');
     const parsedData = [];
+    // Row 2 se start (Header skip)
     for (let i = 1; i < rows.length; i++) {
         const row = rows[i].trim();
         if (!row) continue;
         const cols = row.split(',');
 
-        // NEW ORDER: Name, Team, Fmt, Mat, Inns, Runs, Avg, SR, 4s, 6s, 50s, 100s, Wkts, Econ
+        // MAPPING: 0:Name, 1:Team, 2:Format, 3:Mat, 4:Inns, 5:Runs, 6:Avg, 7:SR, 8:4s, 9:6s, 10:50s, 11:100s, 12:Wkts, 13:Econ
         parsedData.push({
             name: cols[0], team: cols[1], format: cols[2],
             mat: parseInt(cols[3])||0, inns: parseInt(cols[4])||0, runs: parseInt(cols[5])||0,
@@ -46,34 +48,34 @@ function applyFilters() {
     const selectedFormat = document.getElementById('filter-format').value;
     const selectedTeam = document.getElementById('filter-team').value;
     
-    // Filter Data
+    // Filter by Team
     let finalData = database.filter(p => selectedTeam === 'ALL' || p.team === selectedTeam);
 
+    // Filter by Format (or Calculate Overall)
     if (selectedFormat === 'ALL') {
         finalData = calculateOverallStats(finalData);
     } else {
         finalData = finalData.filter(p => p.format === selectedFormat);
     }
 
-    // Sort Data
+    // Sort by Current View
     finalData.sort((a, b) => b[currentView] - a[currentView]);
 
-    // Draw Headers & Table
     updateTableHeaders(); 
     renderTable(finalData);
 }
 
-// --- DYNAMIC HEADERS (Batting vs Bowling) ---
+// ✅ DYNAMIC TABLE HEADERS
 function updateTableHeaders() {
     const thead = document.getElementById('stats-head');
     let headers = `<tr><th style="text-align:left">Player</th><th>Fmt</th><th>Mat</th>`;
 
-    // Agar Bowling view hai (Wickets ya Economy)
+    // Agar Bowling Stats dekh rahe hain
     if (currentView === 'wickets' || currentView === 'econ') {
-        headers += `<th>Wickets</th><th>Econ</th><th>Best</th><th>5W</th></tr>`;
+        headers += `<th>Inns</th><th class="stat-highlight">Wickets</th><th>Econ</th><th>Best</th><th>5W</th></tr>`;
     } else {
-        // Batting view
-        headers += `<th>Inns</th><th>Runs</th><th>Avg</th><th>SR</th><th>4s</th><th>6s</th><th>50s</th><th>100s</th></tr>`;
+        // Agar Batting Stats dekh rahe hain
+        headers += `<th>Inns</th><th class="stat-highlight">Runs</th><th>Avg</th><th>SR</th><th>4s</th><th>6s</th><th>50s</th><th>100s</th></tr>`;
     }
     thead.innerHTML = headers;
 }
@@ -94,11 +96,11 @@ function renderTable(data) {
             <td>${p.mat}</td>`;
 
         if (currentView === 'wickets' || currentView === 'econ') {
-            // Bowling Rows
-            row += `<td class="stat-highlight">${p.wickets}</td><td>${p.econ}</td><td>-</td><td>-</td>`;
+            // Bowling Data
+            row += `<td>${p.inns}</td><td class="stat-main">${p.wickets}</td><td>${p.econ}</td><td>-</td><td>-</td>`;
         } else {
-            // Batting Rows
-            row += `<td>${p.inns}</td><td class="stat-highlight">${p.runs}</td><td>${p.avg}</td><td>${p.sr}</td>
+            // Batting Data
+            row += `<td>${p.inns}</td><td class="stat-main">${p.runs}</td><td>${p.avg}</td><td>${p.sr}</td>
                     <td>${p.fours}</td><td>${p.sixes}</td><td>${p.fifties}</td><td>${p.hundreds}</td>`;
         }
         
@@ -139,11 +141,12 @@ function loadView(viewType) {
     document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
     event.target.classList.add('active');
     
-    currentView = viewType; // Set Global View
+    currentView = viewType;
     
     const titles = { 
-        'runs': 'Most Runs', 'wickets': 'Most Wickets', 'sixes': 'Most Sixes', 
-        'avg': 'Best Average', 'sr': 'Best Strike Rate', 'hundreds': 'Most Centuries', 'econ': 'Best Economy'
+        'runs': 'Most Career Runs', 'wickets': 'Most Wickets', 'sixes': 'Most Sixes', 
+        'avg': 'Highest Average', 'sr': 'Best Strike Rate', 'hundreds': 'Most Centuries', 
+        'fifties': 'Most Fifties', 'econ': 'Best Economy'
     };
     document.getElementById('page-heading').innerText = titles[viewType] || 'Stats';
     applyFilters();
