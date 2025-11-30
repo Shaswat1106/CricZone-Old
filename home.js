@@ -1,87 +1,63 @@
-/* --- home.js : FAIL-SAFE VERSION --- */
+/* --- home.js : ULTIMATE FAIL-SAFE (Final Code) --- */
 
-// 1. NEWS LOADER (Static & Fast)
-function loadNews() {
-    const container = document.getElementById('news-container');
-    if (!container) return;
-
-    container.innerHTML = `
-    <div class="hero-card">
-        <img src="https://img1.hscicdn.com/image/upload/f_auto,t_ds_w_1200,q_50/lsci/db/PICTURES/CMS/370500/370560.jpg" class="hero-img">
-        <div class="hero-content">
-            <span class="news-tag">BORDER-GAVASKAR TROPHY</span>
-            <h1 class="headline">King Kohli Silences Critics with Majestic 80th Century</h1>
-            <p class="summary">Virat Kohli produced a masterclass on a spicy Perth wicket, guiding India to a commanding position on Day 2 against Australia.</p>
-        </div>
-    </div>
-    
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:20px;">
-        <div class="hero-card" style="padding:20px;">
-            <span class="news-tag">IPL 2025</span>
-            <h3 style="margin:10px 0; color:#fff; font-size:20px; font-family:'Teko'">Rishabh Pant sold for record ₹27 Crores</h3>
-        </div>
-        <div class="hero-card" style="padding:20px;">
-            <span class="news-tag">ANALYSIS</span>
-            <h3 style="margin:10px 0; color:#fff; font-size:20px; font-family:'Teko'">Why Bumrah is the tactical genius India needs</h3>
-        </div>
-    </div>`;
+// --- BACKUP DATA (Upcoming Matches) ---
+function getUpcomingMatches() {
+    return [
+        { title: "IPL 2025 • Match 1", description: "CSK vs MI starts tomorrow, 7:30 PM", status: "UPCOMING", matchStarted: false, matchEnded: false },
+        { title: "Big Bash League • Final", description: "Sydney Thunder won by 5 runs", status: "RESULT", matchStarted: true, matchEnded: true },
+        { title: "U19 World Cup • Day 1", description: "India U19 vs Pak U19 (Starting tomorrow)", status: "UPCOMING", matchStarted: false, matchEnded: false }
+    ];
 }
 
-// 2. LIVE SCORES (RSS with Backup)
 async function loadLiveScores() {
     const strip = document.querySelector('.match-strip');
-    strip.innerHTML = '<div style="color:#e1b12c; padding:20px; font-weight:bold;">♻️ Syncing Matches...</div>';
+    strip.innerHTML = '<div style="color:#00ff88; padding:20px; font-weight:bold;">♻️ Checking Global Feeds...</div>';
 
     try {
-        // RSS Feed Try Karo
         const response = await fetch("https://api.rss2json.com/v1/api.json?rss_url=http://static.cricinfo.com/rss/livescores.xml");
         const json = await response.json();
 
-        // Agar items nahi mile
-        if (!json.items) throw new Error("Feed Error");
+        // Check 1: Agar Feed empty hai (yaani items.length < 1)
+        if (!json.items || json.items.length === 0) {
+            // Agar empty hai, to UPCOMING matches load karo
+            renderCards(getUpcomingMatches(), strip);
+            return; 
+        }
 
-        strip.innerHTML = ""; // Clear Loading
+        // Check 2: Agar Live data mil gaya
         renderCards(json.items.slice(0, 10), strip);
 
     } catch (error) {
-        console.warn("Feed Failed, Loading Demo Data");
-        // Backup Data Load Karo
-        renderDemoData(strip);
+        // Check 3: Agar internet block hua to bhi UPCOMING data load karo
+        console.error("Critical Fetch Error:", error);
+        renderCards(getUpcomingMatches(), strip);
     }
 }
 
-// Card Banane ka Logic
+// Card Renderer (Purana code, ab demo data ko bhi use karega)
 function renderCards(matches, container) {
+    container.innerHTML = "";
     matches.forEach(match => {
-        let title = match.title.replace('&amp;', '&');
-        let description = match.description;
+        let title = match.title ? match.title.replace('&amp;', '&') : match.series || "Match";
+        let description = match.description || match.status;
         
-        // Smart Status Logic
         let statusLower = description.toLowerCase();
-        let isFinished = statusLower.includes('won by') || statusLower.includes('drawn') || statusLower.includes('tied');
-        let isLive = !isFinished; 
+        let isFinished = statusLower.includes('won by') || statusLower.includes('tied') || statusLower.includes('result');
+        let isLive = !isFinished && statusLower.includes('live'); // Only LIVE if explicitly says 'live' and not finished
 
         let borderClass = isLive ? 'live' : '';
-        let statusColor = isLive ? '#00ff88' : '#3b94fd'; 
-        let badgeHTML = isLive ? '<span class="blink-dot"></span> LIVE' : '<span style="color:#aaa">RESULT</span>';
-
-        // Teams Parse
-        let parts = title.split(' v ');
-        let t1 = parts[0] || "Team A";
-        let t2 = parts[1] || "Team B";
+        let statusColor = isLive ? '#00ff88' : '#aaa'; 
+        let badgeHTML = isLive ? '<span class="blink-dot"></span> LIVE' : 'UPDATE';
 
         let card = `
         <div class="mini-card ${borderClass}">
             <div style="display:flex; justify-content:space-between; margin-bottom:8px; border-bottom:1px solid #27272a; padding-bottom:5px;">
-                <span style="font-size:10px; color:#888; font-weight:bold;">MATCH CENTER</span>
-                <span class="live-badge">${badgeHTML}</span>
+                <span style="font-size:10px; color:#aaa; font-weight:bold; text-transform:uppercase;">${match.series || 'CRICKET MATCH'}</span>
+                <span class="live-badge" style="color:${isLive ? '#ff4444' : '#aaa'};">${badgeHTML}</span>
             </div>
             
-            <div style="display:flex; justify-content:space-between; margin-top:5px; font-weight:bold; font-size:13px;">
-                <span style="color:#fff;">${t1}</span>
-            </div>
-            <div style="display:flex; justify-content:space-between; margin-top:5px; font-weight:bold; font-size:13px;">
-                <span style="color:#fff;">${t2}</span>
+            <div style="margin-top:5px; font-weight:bold; font-size:13px; color:#fff; line-height:1.4;">
+                ${title}
             </div>
 
             <span style="font-size:11px; color:${statusColor}; display:block; margin-top:10px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
@@ -93,19 +69,38 @@ function renderCards(matches, container) {
     });
 }
 
-// Backup Data (Agar Internet/API slow ho)
-function renderDemoData(container) {
-    container.innerHTML = "";
-    const demos = [
-        { title: "IND 320/4 v AUS 177", description: "India lead by 143 runs" },
-        { title: "CSK v MI", description: "Match starts tomorrow at 7:30 PM" },
-        { title: "SA 287/8 v ENG 240", description: "South Africa won by 47 runs" }
-    ];
-    renderCards(demos, container);
+// News Loader (Same as before)
+function loadNews() {
+    const centerCol = document.querySelector('.col-center');
+    if(!centerCol) return;
+    
+    // Yahan pura news code
+    centerCol.innerHTML = `
+        <div class="hero-news">
+            <img src="https://img1.hscicdn.com/image/upload/f_auto,t_ds_w_1200,q_50/lsci/db/PICTURES/CMS/370500/370560.jpg" class="hero-img-large">
+            <div style="color:#00ff88; font-weight:bold; font-size:12px; margin-bottom:5px;">BORDER GAVASKAR TROPHY</div>
+            <h1 class="hero-title">King Kohli's Masterclass: A Century to Remember in Perth</h1>
+            <p style="color:#aaa; line-height:1.6;">Virat Kohli silenced his critics with a magnificent 80th international century, guiding India to a commanding position on Day 2 of the first Test.</p>
+        </div>
+        <div class="section-heading">LATEST STORIES</div>
+        <div class="news-item">
+            <img src="https://img1.hscicdn.com/image/upload/f_auto,t_ds_w_1280,q_80/lsci/db/PICTURES/CMS/370400/370489.jpg" class="news-thumb">
+            <div class="news-info">
+                <h2>Rishabh Pant Shatters Records: Sold for ₹27 Cr</h2>
+                <span class="news-meta">2 Hours Ago • IPL 2025</span>
+            </div>
+        </div>
+        <div class="news-item">
+            <img src="https://img1.hscicdn.com/image/upload/f_auto,t_ds_w_1280,q_80/lsci/db/PICTURES/CMS/353400/353429.jpg" class="news-thumb">
+            <div class="news-info">
+                <h2>Why Bumrah is the best captain India never had</h2>
+                <span class="news-meta">5 Hours Ago • Analysis</span>
+            </div>
+        </div>
+    `;
 }
 
-// Start Engine
 window.onload = function() {
-    loadNews(); // News pehle load hogi
-    loadLiveScores(); // Phir Score
+    loadNews(); 
+    loadLiveScores(); 
 };
