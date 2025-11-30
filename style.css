@@ -1,10 +1,10 @@
-/* --- CRICZONE PRO THEME (FIXED) --- */
+/* --- style.css : FINAL PREMIUM LOOK --- */
 @import url('https://fonts.googleapis.com/css2?family=Teko:wght@400;600&family=Roboto:wght@400;500;700&display=swap');
 
 :root {
     --bg-body: #09090b;       
     --bg-panel: #141417;      
-    --accent: #00ff88;        
+    --accent: #00ff88;        /* Neon Green */
     --text-main: #ffffff;
     --text-muted: #a1a1aa;
     --border: #27272a;
@@ -16,12 +16,11 @@ body {
     font-family: 'Roboto', sans-serif; 
     background-color: var(--bg-body); 
     color: var(--text-main); 
-    line-height: 1.5;
 }
 
 a { text-decoration: none; color: inherit; }
 
-/* --- NAVBAR --- */
+/* --- 1. NAVBAR (LOGO FIXED) --- */
 .navbar {
     background: rgba(9, 9, 11, 0.95);
     height: 70px;
@@ -33,20 +32,40 @@ a { text-decoration: none; color: inherit; }
     position: sticky;
     top: 0;
     z-index: 1000;
+    backdrop-filter: blur(10px);
+}
+
+/* New Brand Container */
+.brand-box {
+    display: flex;
+    align-items: center;
+    gap: 12px; /* Logo aur Text ke beech gap */
 }
 
 .logo-img {
     height: 45px; 
-    width: auto;
-    display: block;
+    width: 45px;
+    object-fit: cover;
+    border-radius: 50%; /* Logo ko Gol (Round) kar dega */
+    border: 2px solid var(--accent); /* Neon Border */
 }
 
-.nav-links { display: flex; align-items: center; }
+.brand-name {
+    font-family: 'Teko', sans-serif;
+    font-size: 32px;
+    font-weight: 600;
+    color: #fff;
+    line-height: 1;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+.brand-name span { color: var(--accent); }
 
+.nav-links { display: flex; align-items: center; }
 .nav-links a {
     color: var(--text-muted);
     font-weight: 600;
-    margin-left: 20px;
+    margin-left: 25px;
     font-size: 14px;
     text-transform: uppercase;
     transition: 0.3s;
@@ -59,164 +78,101 @@ a { text-decoration: none; color: inherit; }
     padding: 8px 16px;
     border-radius: 4px;
     font-weight: 800;
+    box-shadow: 0 0 10px rgba(0, 255, 136, 0.2);
 }
+.btn-db:hover { box-shadow: 0 0 20px rgba(0, 255, 136, 0.6); }
 
-/* --- HOME PAGE LAYOUT --- */
+/* --- 2. HOME PAGE ANIMATIONS --- */
 .match-strip {
     display: flex;
     gap: 15px;
     overflow-x: auto;
-    padding: 15px 20px;
+    padding: 20px;
     background: #000;
     border-bottom: 1px solid var(--border);
 }
+.match-strip::-webkit-scrollbar { height: 4px; }
+.match-strip::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
 
 .mini-card {
     min-width: 280px;
     background: var(--bg-panel);
     padding: 15px;
-    border-radius: 8px;
+    border-radius: 12px;
     border: 1px solid var(--border);
-    font-size: 13px;
+    transition: transform 0.3s ease, border-color 0.3s ease;
+    cursor: pointer;
 }
-.mini-card.live { border-left: 3px solid var(--accent); }
+.mini-card:hover {
+    transform: translateY(-5px); /* Hover karne par upar uthega */
+    border-color: var(--accent);
+}
+.mini-card.live { border-left: 3px solid #ff4444; }
+
+/* Blinking Dot Animation */
+.blink-dot {
+    height: 8px; width: 8px; background-color: #ff4444;
+    border-radius: 50%; display: inline-block; margin-right: 5px;
+    animation: blink 1.5s infinite;
+}
+@keyframes blink { 0% {opacity: 1;} 50% {opacity: 0.4;} 100% {opacity: 1;} }
 
 .main-container {
     max-width: 1200px;
-    margin: 20px auto;
+    margin: 30px auto;
     padding: 0 20px;
     display: grid;
-    grid-template-columns: 2fr 1fr; /* Left bada, Right chota */
-    gap: 25px;
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
 }
 
-/* Content Areas */
+/* News Cards */
 .hero-card {
     background: var(--bg-panel);
     border: 1px solid var(--border);
     border-radius: 12px;
     overflow: hidden;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
+    transition: transform 0.3s ease;
+    cursor: pointer;
 }
-.hero-img { width: 100%; height: 350px; object-fit: cover; display: block; }
-.hero-content { padding: 25px; }
+.hero-card:hover { transform: scale(1.01); border-color: #444; }
 
-.news-tag { color: var(--accent); font-weight: bold; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; display: block; margin-bottom: 5px; }
-.headline { font-family: 'Teko', sans-serif; font-size: 32px; line-height: 1.1; margin: 10px 0; color: #fff; }
-.summary { color: var(--text-muted); font-size: 14px; }
+.hero-img { width: 100%; height: 380px; object-fit: cover; display: block; }
+.hero-content { padding: 25px; position: relative; }
 
-/* Sidebar Widgets */
+/* News Gradient Overlay */
+.hero-content::before {
+    content: ''; position: absolute; top: -50px; left: 0; width: 100%; height: 50px;
+    background: linear-gradient(to top, var(--bg-panel), transparent);
+}
+
+.news-tag { color: var(--accent); font-weight: 800; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; display: block; }
+.headline { font-family: 'Teko', sans-serif; font-size: 38px; line-height: 1; margin: 10px 0; color: #fff; }
+.summary { color: var(--text-muted); font-size: 15px; line-height: 1.6; }
+
+/* Sidebar */
 .sidebar-widget {
     background: var(--bg-panel);
     border: 1px solid var(--border);
     border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 20px;
+    padding: 25px;
+    margin-bottom: 25px;
 }
 .widget-title {
-    font-size: 14px;
-    font-weight: 800;
-    text-transform: uppercase;
-    margin-bottom: 15px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid var(--border);
-    color: #fff;
+    font-size: 14px; font-weight: 800; text-transform: uppercase; margin-bottom: 20px;
+    padding-bottom: 10px; border-bottom: 1px solid var(--border); color: #fff; display: flex; align-items: center; gap: 10px;
 }
 .quick-link {
     display: flex; justify-content: space-between; padding: 12px 0; 
-    border-bottom: 1px solid var(--border); color: var(--text-muted); font-size: 14px; cursor: pointer;
+    border-bottom: 1px solid #222; color: var(--text-muted); font-size: 14px; cursor: pointer; transition: 0.2s;
 }
-.quick-link:hover { color: var(--accent); }
+.quick-link:hover { color: var(--accent); padding-left: 5px; }
 
-/* --- STATS DASHBOARD --- */
-.dashboard-wrapper { display: flex; min-height: 100vh; }
-
-.sidebar {
-    width: 240px;
-    background: var(--bg-panel);
-    border-right: 1px solid var(--border);
-    flex-shrink: 0; /* Sidebar sikudna nahi chahiye */
-}
-
-.menu-cat {
-    color: var(--text-muted);
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 1px;
-    padding: 20px 20px 10px;
-    text-transform: uppercase;
-}
-
-.menu-item {
-    padding: 10px 20px;
-    cursor: pointer;
-    color: #e4e4e7;
-    font-size: 13px;
-    border-left: 3px solid transparent;
-}
-.menu-item:hover { background: #1f1f22; color: #fff; }
-.menu-item.active {
-    background: rgba(0, 255, 136, 0.05);
-    color: var(--accent);
-    border-left: 3px solid var(--accent);
-}
-
-.main-stats { flex: 1; padding: 20px; overflow-x: auto; }
-
-.page-title {
-    font-family: 'Teko', sans-serif;
-    font-size: 36px;
-    margin-bottom: 20px;
-    color: #fff;
-    text-transform: uppercase;
-}
-
-.filters { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-select {
-    background: #000;
-    color: #fff;
-    border: 1px solid var(--border);
-    padding: 8px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-/* --- TABLE --- */
-table { width: 100%; border-collapse: separate; border-spacing: 0; }
-
-thead th {
-    text-align: right;
-    color: var(--text-muted);
-    font-size: 11px;
-    text-transform: uppercase;
-    padding: 10px;
-    border-bottom: 1px solid var(--border);
-}
-thead th:first-child { text-align: left; }
-
-tbody td {
-    padding: 12px 10px;
-    text-align: right;
-    font-size: 13px;
-    color: #fff;
-    border-bottom: 1px solid #1a1a1a;
-}
-tbody td:first-child { text-align: left; color: #fff; font-weight: 600; }
-
-.p-name { display: block; font-size: 14px; }
-.p-team { font-size: 10px; color: var(--text-muted); text-transform: uppercase; }
-.stat-highlight { color: var(--accent); font-weight: 700; font-size: 14px; }
-
-.badge { padding: 2px 6px; border-radius: 3px; font-size: 9px; font-weight: bold; display: inline-block; }
-.badge.ODI { background: #3b82f6; color: white; }
-.badge.T20 { background: #f97316; color: white; }
-.badge.TEST { background: #e5e7eb; color: black; }
-.badge.ALL { background: var(--accent); color: black; }
-
-/* --- MOBILE FIX --- */
+/* Mobile */
 @media (max-width: 768px) {
     .main-container { grid-template-columns: 1fr; }
-    .dashboard-wrapper { flex-direction: column; }
-    .sidebar { width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border); }
-    .nav-links a { margin-left: 10px; font-size: 11px; }
+    .hero-img { height: 220px; }
+    .navbar { padding: 0 15px; }
+    .brand-name { font-size: 26px; }
 }
