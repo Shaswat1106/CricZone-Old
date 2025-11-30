@@ -19,7 +19,7 @@ async function loadLiveScores() {
             
             // --- LOGIC: Match Live hai ya Khatam? ---
             let statusLower = description.toLowerCase();
-            let isFinished = statusLower.includes('won by') || statusLower.includes('drawn') || statusLower.includes('tied');
+            let isFinished = statusLower.includes('won by') || statusLower.includes('drawn') || statusLower.includes('tied') || statusLower.includes('abandoned');
             let isLive = !isFinished; // Agar khatam nahi hua, to Live maano
 
             // Colors
