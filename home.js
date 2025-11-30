@@ -1,19 +1,20 @@
-/* --- home.js : FAST RSS FEED TRICK --- */
+/* --- home.js : SMART RSS FEED (Logic Fixed) --- */
 
 async function loadLiveScores() {
     const strip = document.querySelector('.match-strip');
     
-    // Loading State
-    strip.innerHTML = '<div style="color:#e1b12c; padding:20px; font-weight:bold;">♻️ Refreshing Live Feed...</div>';
+    // Cache todne ke liye timestamp lagaya hai taki purana data na aaye
+    const cacheBuster = new Date().getTime();
+    
+    strip.innerHTML = '<div style="color:#e1b12c; padding:20px; font-weight:bold;">♻️ Refreshing Scores...</div>';
 
     try {
-        // Method: RSS to JSON Converter
-        const response = await fetch("https://api.rss2json.com/v1/api.json?rss_url=http://static.cricinfo.com/rss/livescores.xml");
+        // RSS to JSON (Using a robust converter)
+        const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=http://static.cricinfo.com/rss/livescores.xml&api_key=0&t=${cacheBuster}`);
         const json = await response.json();
 
-        // Agar data nahi aaya
         if (!json.items) {
-            strip.innerHTML = '<div style="color:red; padding:20px;">No Live Matches found via Feed.</div>';
+            strip.innerHTML = '<div style="color:red; padding:20px;">No Matches Found.</div>';
             return;
         }
 
@@ -25,22 +26,28 @@ async function loadLiveScores() {
         matches.forEach(match => {
             // Title clean karo
             let title = match.title.replace('&amp;', '&');
-            let status = match.description;
+            let status = match.description; // e.g. "India won by 10 runs"
             
-            // Live Check
-            let isLive = title.includes('*') || status.toLowerCase().includes('live');
+            // --- SMART LOGIC (Ye hai Sudhaar) ---
+            // Check karo ki match khatam ho gaya hai kya?
+            let statusLower = status.toLowerCase();
+            let isFinished = statusLower.includes('won by') || statusLower.includes('drawn') || statusLower.includes('tied') || statusLower.includes('abandoned');
+            
+            // Agar khatam nahi hua, tabhi LIVE hai
+            let isLive = !isFinished; 
+            
+            // Colors & Badge set karo
             let borderClass = isLive ? 'live' : '';
-            let statusColor = isLive ? '#00ff88' : '#aaa'; 
-            let liveBadge = isLive ? '<span class="blink-dot"></span> LIVE' : 'MATCH CENTER';
+            let statusColor = isLive ? '#00ff88' : '#3b94fd'; // Live = Green, Result = Blue
+            let liveBadge = isLive ? '<span class="blink-dot"></span> LIVE' : 'RESULT';
+            let badgeColor = isLive ? '#ff4444' : '#aaa'; // Badge: Red for Live, Grey for Result
 
             let card = `
             <div class="mini-card ${borderClass}">
                 <div style="display:flex; justify-content:space-between; margin-bottom:10px; border-bottom:1px solid #333; padding-bottom:5px;">
-                    <span style="font-size:10px; color:#aaa; font-weight:bold; text-transform:uppercase; max-width:180px; overflow:hidden; white-space:nowrap;">
+                    <span style="font-size:10px; color:#aaa; font-weight:bold; text-transform:uppercase;">MATCH CENTER</span>
+                    <span style="font-size:10px; color:${badgeColor}; font-weight:bold;">
                         ${liveBadge}
-                    </span>
-                    <span style="font-size:10px; color:${isLive ? '#ff4444' : '#ccc'}; font-weight:bold;">
-                       ${isLive ? '●' : ''}
                     </span>
                 </div>
                 
@@ -58,15 +65,16 @@ async function loadLiveScores() {
 
     } catch (error) {
         console.error(error);
-        strip.innerHTML = '<div style="color:red; padding:20px;">Feed Error.</div>';
+        strip.innerHTML = '<div style="color:red; padding:20px;">Feed Error. Try Refreshing.</div>';
     }
 }
 
-// News Section (Static High Quality)
+// News Section (Same as before)
 function loadNews() {
     const container = document.getElementById('news-container');
     if(!container) return;
     
+    // Filhal Static News (Baad me Google Sheet se jod lena)
     container.innerHTML = `
     <div class="hero-card">
         <img src="https://img1.hscicdn.com/image/upload/f_auto,t_ds_w_1200,q_50/lsci/db/PICTURES/CMS/370500/370560.jpg" class="hero-img">
