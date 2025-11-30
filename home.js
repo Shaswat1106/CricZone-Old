@@ -1,103 +1,122 @@
-/* --- home.js : SMART RSS FEED (Logic Fixed) --- */
+/* --- home.js : SMART STATUS FIX --- */
 
 async function loadLiveScores() {
-    const strip = document.querySelector('.match-strip');
+    const container = document.getElementById('live-score-container');
     
-    // Cache todne ke liye timestamp lagaya hai taki purana data na aaye
-    const cacheBuster = new Date().getTime();
+    // Cache Buster (Taaki browser purana data na dikhaye)
+    const time = new Date().getTime();
     
-    strip.innerHTML = '<div style="color:#e1b12c; padding:20px; font-weight:bold;">♻️ Refreshing Scores...</div>';
-
     try {
-        // RSS to JSON (Using a robust converter)
-        const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=http://static.cricinfo.com/rss/livescores.xml&api_key=0&t=${cacheBuster}`);
+        const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=http://static.cricinfo.com/rss/livescores.xml&t=${time}`);
         const json = await response.json();
 
-        if (!json.items) {
-            strip.innerHTML = '<div style="color:red; padding:20px;">No Matches Found.</div>';
-            return;
-        }
+        if (!json.items) throw new Error("No Data");
 
-        strip.innerHTML = ""; // Clear Loading
-        
-        // Data Loop
-        const matches = json.items.slice(0, 10);
+        container.innerHTML = ""; 
 
-        matches.forEach(match => {
-            // Title clean karo
-            let title = match.title.replace('&amp;', '&');
-            let status = match.description; // e.g. "India won by 10 runs"
+        // Top 15 Matches
+        json.items.slice(0, 15).forEach(match => {
+            let title = match.title; 
+            let description = match.description; // e.g. "India won by 17 runs"
             
-            // --- SMART LOGIC (Ye hai Sudhaar) ---
-            // Check karo ki match khatam ho gaya hai kya?
-            let statusLower = status.toLowerCase();
-            let isFinished = statusLower.includes('won by') || statusLower.includes('drawn') || statusLower.includes('tied') || statusLower.includes('abandoned');
+            // --- 1. SMART STATUS LOGIC (Yahan fix kiya hai) ---
+            let statusLower = description.toLowerCase();
             
-            // Agar khatam nahi hua, tabhi LIVE hai
-            let isLive = !isFinished; 
-            
-            // Colors & Badge set karo
-            let borderClass = isLive ? 'live' : '';
-            let statusColor = isLive ? '#00ff88' : '#3b94fd'; // Live = Green, Result = Blue
-            let liveBadge = isLive ? '<span class="blink-dot"></span> LIVE' : 'RESULT';
-            let badgeColor = isLive ? '#ff4444' : '#aaa'; // Badge: Red for Live, Grey for Result
+            // Check karo ki match khatam hua ya nahi
+            let isFinished = statusLower.includes('won by') || 
+                             statusLower.includes('drawn') || 
+                             statusLower.includes('tied') || 
+                             statusLower.includes('abandoned') ||
+                             statusLower.includes('no result');
 
+            // Agar Finished hai to Live nahi ho sakta
+            let isLive = !isFinished;
+
+            // Visual Settings
+            let liveDot = isLive ? '<span class="live-indicator">●</span>' : '';
+            let statusColor = isLive ? '#ff4444' : '#3b94fd'; // Live=Red, Result=Blue
+            
+            // --- 2. TEAM & SCORE PARSING ---
+            let parts = title.split(' v ');
+            let t1_Name = "Team A", t1_Score = "-", t1_Overs = "";
+            let t2_Name = "Team B", t2_Score = "-", t2_Overs = "";
+
+            if (parts.length >= 2) {
+                let left = parseTeamData(parts[0]);
+                t1_Name = left.name;
+                t1_Score = left.score;
+                t1_Overs = left.overs;
+
+                let right = parseTeamData(parts[1].replace('*', ''));
+                t2_Name = right.name;
+                t2_Score = right.score;
+                t2_Overs = right.overs;
+            } else {
+                t1_Name = title;
+            }
+
+            // --- 3. HTML CARD ---
             let card = `
-            <div class="mini-card ${borderClass}">
-                <div style="display:flex; justify-content:space-between; margin-bottom:10px; border-bottom:1px solid #333; padding-bottom:5px;">
-                    <span style="font-size:10px; color:#aaa; font-weight:bold; text-transform:uppercase;">MATCH CENTER</span>
-                    <span style="font-size:10px; color:${badgeColor}; font-weight:bold;">
-                        ${liveBadge}
-                    </span>
+            <div class="score-card-vertical" onclick="window.location.href='stats.html'">
+                <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                    <span class="series-name" style="font-size:10px; color:#888;">MATCH UPDATE</span>
+                    ${liveDot}
                 </div>
                 
-                <div style="margin-top:5px; font-weight:bold; font-size:13px; color:#fff; line-height:1.4;">
-                    ${title}
+                <div class="team-row">
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <span style="color:#e0e0e0; font-weight:700;">${t1_Name}</span>
+                    </div>
+                    <div style="text-align:right;">
+                        <span style="color:#fff; font-weight:bold;">${t1_Score}</span>
+                        <span style="color:#888; font-size:11px; margin-left:4px;">${t1_Overs}</span>
+                    </div>
                 </div>
 
-                <span style="font-size:11px; color:${statusColor}; display:block; margin-top:10px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
-                    ${status}
+                <div class="team-row">
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <span style="color:#e0e0e0; font-weight:700;">${t2_Name}</span>
+                    </div>
+                    <div style="text-align:right;">
+                        <span style="color:#fff; font-weight:bold;">${t2_Score}</span>
+                        <span style="color:#888; font-size:11px; margin-left:4px;">${t2_Overs}</span>
+                    </div>
+                </div>
+                
+                <span style="font-size:11px; color:${statusColor}; margin-top:8px; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                    ${description}
                 </span>
             </div>`;
             
-            strip.innerHTML += card;
+            container.innerHTML += card;
         });
 
     } catch (error) {
-        console.error(error);
-        strip.innerHTML = '<div style="color:red; padding:20px;">Feed Error. Try Refreshing.</div>';
+        container.innerHTML = '<div style="color:red; font-size:12px;">Data Error.</div>';
     }
 }
 
-// News Section (Same as before)
-function loadNews() {
-    const container = document.getElementById('news-container');
-    if(!container) return;
+// Helper to Format Score (349/8 -> 349-8)
+function parseTeamData(rawString) {
+    rawString = rawString.trim();
+    let match = rawString.match(/(\d+\/\d+|\d+-\d+|\d+)/);
     
-    // Filhal Static News (Baad me Google Sheet se jod lena)
-    container.innerHTML = `
-    <div class="hero-card">
-        <img src="https://img1.hscicdn.com/image/upload/f_auto,t_ds_w_1200,q_50/lsci/db/PICTURES/CMS/370500/370560.jpg" class="hero-img">
-        <div class="hero-content">
-            <span class="news-tag">TOP STORY</span>
-            <h1 class="headline">King Kohli Silences Critics with Majestic 80th Century</h1>
-            <p class="summary">Virat Kohli produced a masterclass on a spicy Perth wicket, guiding India to a commanding position on Day 2 against Australia.</p>
-        </div>
-    </div>
-    
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:20px;">
-        <div class="hero-card" style="padding:20px;">
-            <span class="news-tag">IPL 2025</span>
-            <h3 style="margin:10px 0; color:#fff; font-size:20px; font-family:'Teko'">Rishabh Pant sold for record ₹27 Crores</h3>
-        </div>
-        <div class="hero-card" style="padding:20px;">
-            <span class="news-tag">ANALYSIS</span>
-            <h3 style="margin:10px 0; color:#fff; font-size:20px; font-family:'Teko'">Why Bumrah is the tactical genius India needs</h3>
-        </div>
-    </div>`;
+    if (match) {
+        let scoreIndex = match.index;
+        let name = rawString.substring(0, scoreIndex).trim();
+        let rawScore = match[0];
+        let finalScore = rawScore.replace('/', '-'); 
+        
+        let overs = "";
+        if (rawString.includes('(')) {
+            overs = rawString.match(/\((.*?)\)/)[0];
+        }
+
+        return { name: name, score: finalScore, overs: overs };
+    }
+    return { name: rawString, score: "", overs: "" };
 }
 
 window.onload = function() {
     loadLiveScores();
-    loadNews();
 };
