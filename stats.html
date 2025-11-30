@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stats Database - CricZone</title>
-    <link rel="stylesheet" href="style.css?v=2">
-</head>
+    <link rel="stylesheet" href="style.css?v=5"> </head>
 <body>
 
     <nav class="navbar">
-        <a href="index.html">
+        <a href="index.html" style="display:flex; align-items:center; gap:10px;">
             <img src="logo.jpg" alt="CricZone" class="logo-img">
+            <div style="font-family:'Teko'; font-size:32px; font-weight:bold; color:white;">CRIC<span style="color:#00ff88">ZONE</span></div>
         </a>
         <div class="nav-links">
             <a href="index.html">Home</a>
@@ -53,15 +53,16 @@
                     <option value="PAK">Pakistan</option>
                     <option value="SA">South Africa</option>
                 </select>
-                <input type="hidden" id="filter-sort" value="runs">
             </div>
 
-            <table>
-                <thead id="stats-head">
-                    </thead>
-                <tbody id="stats-body">
-                    </tbody>
-            </table>
+            <div style="overflow-x:auto;">
+                <table style="width:100%; border-collapse:separate; border-spacing:0 5px;">
+                    <thead id="stats-head">
+                        </thead>
+                    <tbody id="stats-body">
+                        </tbody>
+                </table>
+            </div>
         </main>
     </div>
 
