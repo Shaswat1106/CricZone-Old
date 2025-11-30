@@ -4,13 +4,107 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stats Database - CricZone</title>
-    <link rel="stylesheet" href="style.css?v=5"> </head>
+    <link rel="stylesheet" href="style.css?v=6">
+
+    <style>
+        /* Table Layout Fix */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        table { 
+            width: 100%; 
+            border-collapse: separate; 
+            border-spacing: 0 4px; 
+            margin-top: 20px;
+            background: transparent;
+            min-width: 800px; /* Choti screen pe scroll hoga */
+        }
+
+        /* Headings */
+        thead th {
+            background-color: #1a1a1a;
+            color: #a1a1aa;
+            text-transform: uppercase;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            padding: 15px;
+            text-align: right;
+            border-bottom: 2px solid #333;
+            cursor: pointer;
+        }
+        thead th:first-child { text-align: left; padding-left: 20px; }
+
+        /* Rows */
+        tbody tr {
+            background-color: #141417;
+            transition: transform 0.2s;
+        }
+        tbody tr:hover {
+            background-color: #1f1f22;
+            transform: scale(1.005);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+
+        /* Cells */
+        tbody td {
+            padding: 16px 15px;
+            color: #ffffff;
+            font-size: 14px;
+            text-align: right;
+            border-bottom: 1px solid #27272a;
+            font-family: 'Roboto', sans-serif;
+            font-weight: 500;
+        }
+        
+        /* First Column (Player Name) */
+        tbody td:first-child { 
+            text-align: left; 
+            padding-left: 20px;
+            font-weight: bold; 
+            border-left: 4px solid transparent; /* Hover border ke liye jagah */
+            border-radius: 6px 0 0 6px;
+        }
+        
+        /* Hover Effect on Border */
+        tbody tr:hover td:first-child {
+            border-left: 4px solid #00ff88;
+        }
+        
+        /* Last Column Radius */
+        tbody td:last-child { border-radius: 0 6px 6px 0; }
+
+        /* Badges */
+        .badge { 
+            padding: 4px 8px; 
+            border-radius: 4px; 
+            font-size: 10px; 
+            font-weight: 800; 
+            display: inline-block;
+            text-transform: uppercase;
+        }
+        .badge.ODI { background: #3b82f6; color: white; }
+        .badge.T20 { background: #f97316; color: white; }
+        .badge.TEST { background: #e5e7eb; color: black; }
+        .badge.ALL { background: #00ff88; color: black; }
+
+        /* Highlight Numbers (Runs/Wickets) */
+        .stat-highlight { 
+            color: #00ff88; 
+            font-weight: 800; 
+            font-size: 16px; 
+        }
+    </style>
+</head>
 <body>
 
     <nav class="navbar">
-        <a href="index.html" style="display:flex; align-items:center; gap:10px;">
+        <a href="index.html" style="display:flex; align-items:center; gap:10px; text-decoration:none;">
             <img src="logo.jpg" alt="CricZone" class="logo-img">
-            <div style="font-family:'Teko'; font-size:32px; font-weight:bold; color:white;">CRIC<span style="color:#00ff88">ZONE</span></div>
+            <div style="font-family:'Teko'; font-size:32px; font-weight:bold; color:white; line-height:1;">CRIC<span style="color:#00ff88">ZONE</span></div>
         </a>
         <div class="nav-links">
             <a href="index.html">Home</a>
@@ -20,6 +114,7 @@
     </nav>
 
     <div class="dashboard-wrapper">
+        
         <aside class="sidebar">
             <div class="menu-cat">Batting Records</div>
             <div class="menu-item active" onclick="loadView('runs')">Most Career Runs</div>
@@ -53,10 +148,11 @@
                     <option value="PAK">Pakistan</option>
                     <option value="SA">South Africa</option>
                 </select>
+                <input type="hidden" id="filter-sort" value="runs">
             </div>
 
-            <div style="overflow-x:auto;">
-                <table style="width:100%; border-collapse:separate; border-spacing:0 5px;">
+            <div class="table-responsive">
+                <table>
                     <thead id="stats-head">
                         </thead>
                     <tbody id="stats-body">
