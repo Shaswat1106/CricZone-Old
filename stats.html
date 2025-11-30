@@ -1,167 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Stats Database - CricZone</title>
-    <link rel="stylesheet" href="style.css?v=6">
-
-    <style>
-        /* Table Layout Fix */
-        .table-responsive {
-            width: 100%;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        table { 
-            width: 100%; 
-            border-collapse: separate; 
-            border-spacing: 0 4px; 
-            margin-top: 20px;
-            background: transparent;
-            min-width: 800px; /* Choti screen pe scroll hoga */
-        }
-
-        /* Headings */
-        thead th {
-            background-color: #1a1a1a;
-            color: #a1a1aa;
-            text-transform: uppercase;
-            font-size: 12px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            padding: 15px;
-            text-align: right;
-            border-bottom: 2px solid #333;
-            cursor: pointer;
-        }
-        thead th:first-child { text-align: left; padding-left: 20px; }
-
-        /* Rows */
-        tbody tr {
-            background-color: #141417;
-            transition: transform 0.2s;
-        }
-        tbody tr:hover {
-            background-color: #1f1f22;
-            transform: scale(1.005);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-        }
-
-        /* Cells */
-        tbody td {
-            padding: 16px 15px;
-            color: #ffffff;
-            font-size: 14px;
-            text-align: right;
-            border-bottom: 1px solid #27272a;
-            font-family: 'Roboto', sans-serif;
-            font-weight: 500;
-        }
-        
-        /* First Column (Player Name) */
-        tbody td:first-child { 
-            text-align: left; 
-            padding-left: 20px;
-            font-weight: bold; 
-            border-left: 4px solid transparent; /* Hover border ke liye jagah */
-            border-radius: 6px 0 0 6px;
-        }
-        
-        /* Hover Effect on Border */
-        tbody tr:hover td:first-child {
-            border-left: 4px solid #00ff88;
-        }
-        
-        /* Last Column Radius */
-        tbody td:last-child { border-radius: 0 6px 6px 0; }
-
-        /* Badges */
-        .badge { 
-            padding: 4px 8px; 
-            border-radius: 4px; 
-            font-size: 10px; 
-            font-weight: 800; 
-            display: inline-block;
-            text-transform: uppercase;
-        }
-        .badge.ODI { background: #3b82f6; color: white; }
-        .badge.T20 { background: #f97316; color: white; }
-        .badge.TEST { background: #e5e7eb; color: black; }
-        .badge.ALL { background: #00ff88; color: black; }
-
-        /* Highlight Numbers (Runs/Wickets) */
-        .stat-highlight { 
-            color: #00ff88; 
-            font-weight: 800; 
-            font-size: 16px; 
-        }
-    </style>
+    <link rel="stylesheet" href="style.css?v=11">
 </head>
 <body>
 
     <nav class="navbar">
-        <a href="index.html" style="display:flex; align-items:center; gap:10px; text-decoration:none;">
-            <img src="logo.jpg" alt="CricZone" class="logo-img">
-            <div style="font-family:'Teko'; font-size:32px; font-weight:bold; color:white; line-height:1;">CRIC<span style="color:#00ff88">ZONE</span></div>
+        <a href="index.html" class="brand-box">
+            <img src="logo.jpg" alt="CricZone Logo" class="logo-img">
+            <div class="brand-name">CRIC<span>ZONE</span></div>
         </a>
         <div class="nav-links">
-            <a href="index.html">Home</a>
+            <a href="index.html">Live Scores</a>
             <a href="rankings.html">Rankings</a>
-            <a href="stats.html" class="active">Database</a>
+            <a href="stats.html" class="active">Stats Database</a>
         </div>
     </nav>
 
-    <div class="dashboard-wrapper">
-        
-        <aside class="sidebar">
-            <div class="menu-cat">Batting Records</div>
-            <div class="menu-item active" onclick="loadView('runs')">Most Career Runs</div>
-            <div class="menu-item" onclick="loadView('avg')">Highest Average</div>
-            <div class="menu-item" onclick="loadView('sr')">Best Strike Rate</div>
-            <div class="menu-item" onclick="loadView('sixes')">Most Sixes</div>
-            <div class="menu-item" onclick="loadView('hundreds')">Most Centuries</div>
-            <div class="menu-item" onclick="loadView('fifties')">Most Fifties</div>
+    <div style="max-width:1100px; margin:30px auto; padding:0 20px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
+            <h1 id="page-heading" style="font-family:'Teko',sans-serif; font-size:34px; margin-bottom:6px;">Most Career Runs</h1>
 
-            <div class="menu-cat">Bowling Records</div>
-            <div class="menu-item" onclick="loadView('wickets')">Most Wickets</div>
-            <div class="menu-item" onclick="loadView('econ')">Best Economy</div>
-        </aside>
-
-        <main class="main-stats">
-            <h1 id="page-heading" class="page-title">Most Runs</h1>
-
-            <div class="filters">
-                <select id="filter-format" onchange="applyFilters()">
-                    <option value="ALL">OVERALL CAREER</option>
-                    <option value="ODI">ODI Cricket</option>
-                    <option value="T20">T20 International</option>
-                    <option value="TEST">Test Cricket</option>
+            <div style="display:flex; gap:10px; align-items:center;">
+                <select id="filter-format" onchange="applyFilters()" style="padding:8px; border-radius:6px; background:var(--bg-panel); color:#fff; border:1px solid #222;">
+                    <option value="ALL">All Formats</option>
+                    <option value="TEST">TEST</option>
+                    <option value="ODI">ODI</option>
+                    <option value="T20">T20</option>
                 </select>
 
-                <select id="filter-team" onchange="applyFilters()">
+                <select id="filter-team" onchange="applyFilters()" style="padding:8px; border-radius:6px; background:var(--bg-panel); color:#fff; border:1px solid #222;">
                     <option value="ALL">All Teams</option>
-                    <option value="IND">India</option>
-                    <option value="AUS">Australia</option>
-                    <option value="ENG">England</option>
-                    <option value="PAK">Pakistan</option>
-                    <option value="SA">South Africa</option>
+                    <option value="India">India</option>
+                    <option value="England">England</option>
+                    <option value="Australia">Australia</option>
                 </select>
-                <input type="hidden" id="filter-sort" value="runs">
-            </div>
 
-            <div class="table-responsive">
-                <table>
-                    <thead id="stats-head">
-                        </thead>
-                    <tbody id="stats-body">
-                        </tbody>
+                <div style="display:flex; gap:6px;">
+                    <div class="menu-item mini-card active-tab" onclick="loadView('runs')">Runs</div>
+                    <div class="menu-item mini-card" onclick="loadView('wickets')">Wkts</div>
+                    <div class="menu-item mini-card" onclick="loadView('avg')">Avg</div>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top:18px;">
+            <div class="mini-card" style="padding:0; overflow:auto;">
+                <table class="table" style="min-width:900px;">
+                    <thead id="stats-head"></thead>
+                    <tbody id="stats-body"></tbody>
                 </table>
             </div>
-        </main>
+        </div>
     </div>
 
-    <script src="logic.js"></script>
+    <script src="logic.js?v=101"></script>
 </body>
 </html>
