@@ -4,7 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CricZone - Live Cricket</title>
-    <link rel="stylesheet" href="style.css?v=3"> <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="style.css?v=10">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
 
@@ -23,103 +26,38 @@
     </nav>
 
     <div class="match-strip">
-        <div class="mini-card live">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                <span style="font-size:10px; color:#aaa; font-weight:bold;">IND vs AUS • 1st Test</span>
-                <span style="font-size:10px; color:#ff4444; font-weight:bold;"><span class="blink-dot"></span>LIVE</span>
-            </div>
-            <div style="display:flex; justify-content:space-between; margin-top:5px; font-weight:bold;">
-                <span>🇮🇳 IND</span> <span style="color:#fff;">320/4</span>
-            </div>
-            <div style="display:flex; justify-content:space-between; margin-top:5px; font-weight:bold;">
-                <span>🇦🇺 AUS</span> <span style="color:#fff;">177</span>
-            </div>
-            <span style="font-size:11px; color:#00ff88; display:block; margin-top:10px;">India lead by 143 runs</span>
-        </div>
-
-        <div class="mini-card">
-            <span style="font-size:10px; color:#aaa; font-weight:bold;">IPL 2025 • Match 1</span>
-            <div style="display:flex; justify-content:space-between; margin-top:10px; font-weight:bold;">
-                <span>🦁 CSK</span> <span style="color:#555;">-</span>
-            </div>
-            <div style="display:flex; justify-content:space-between; margin-top:5px; font-weight:bold;">
-                <span>🔵 MI</span> <span style="color:#555;">-</span>
-            </div>
-            <span style="font-size:11px; color:#aaa; display:block; margin-top:10px; border-top:1px solid #333; padding-top:5px;">Starts Tomorrow, 7:30 PM</span>
-        </div>
-        
-        <div class="mini-card">
-            <span style="font-size:10px; color:#aaa; font-weight:bold;">PSL FINAL • RESULT</span>
-            <div style="display:flex; justify-content:space-between; margin-top:10px; font-weight:bold;">
-                <span>LAHQ</span> <span style="color:#fff;">200/3</span>
-            </div>
-            <div style="display:flex; justify-content:space-between; margin-top:5px; font-weight:bold;">
-                <span>MUL</span> <span style="color:#fff;">198/9</span>
-            </div>
-            <span style="font-size:11px; color:#00ff88; display:block; margin-top:10px;">Lahore won by 2 runs</span>
-        </div>
+        <div style="color:#e1b12c; padding:20px; font-weight:bold;">♻️ Connecting to Feed...</div>
     </div>
 
     <div class="main-container">
         
-        <div class="content-left">
-            <div class="hero-card">
-                <img src="https://img1.hscicdn.com/image/upload/f_auto,t_ds_w_1200,q_50/lsci/db/PICTURES/CMS/370500/370560.jpg" class="hero-img">
-                <div class="hero-content">
-                    <span class="news-tag">BORDER-GAVASKAR TROPHY</span>
-                    <h1 class="headline">King Kohli Silences Critics with Majestic 80th Century</h1>
-                    <p class="summary">Virat Kohli produced a masterclass on a spicy Perth wicket, guiding India to a commanding position. The celebration said it all.</p>
-                </div>
+        <div class="content-left" id="news-container">
             </div>
-
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
-                <div class="hero-card" style="padding:20px; display:flex; flex-direction:column; justify-content:space-between;">
-                    <div>
-                        <span class="news-tag">IPL AUCTION</span>
-                        <h3 style="font-size:22px; margin:10px 0; color:#fff; font-family:'Teko';">Rishabh Pant sold for record ₹27 Crores to PBKS</h3>
-                    </div>
-                    <span style="font-size:12px; color:#555; margin-top:10px;">2 hours ago</span>
-                </div>
-                <div class="hero-card" style="padding:20px; display:flex; flex-direction:column; justify-content:space-between;">
-                    <div>
-                        <span class="news-tag">ANALYSIS</span>
-                        <h3 style="font-size:22px; margin:10px 0; color:#fff; font-family:'Teko';">Why Bumrah is the tactical genius India needs</h3>
-                    </div>
-                    <span style="font-size:12px; color:#555; margin-top:10px;">5 hours ago</span>
-                </div>
-            </div>
-        </div>
 
         <div class="content-right">
+            
             <div class="sidebar-widget">
-                <div class="widget-title"><i class="fas fa-chart-bar" style="color:#00ff88"></i> QUICK STATS</div>
-                <a href="stats.html" class="quick-link">
-                    <span>Most Career Runs</span> <i class="fas fa-arrow-right"></i>
-                </a>
-                <a href="stats.html" class="quick-link">
-                    <span>Highest Batting Avg</span> <i class="fas fa-arrow-right"></i>
-                </a>
-                <a href="stats.html" class="quick-link">
-                    <span>Purple Cap List</span> <i class="fas fa-arrow-right"></i>
-                </a>
-                <a href="stats.html" class="quick-link">
-                    <span>Most Sixes in T20s</span> <i class="fas fa-arrow-right"></i>
-                </a>
-                <div style="margin-top:20px; text-align:center;">
-                    <a href="stats.html" style="background:#00ff88; color:#000; padding:12px 0; width:100%; display:block; border-radius:4px; font-weight:800; font-size:14px; transition:0.3s;">ACCESS DATABASE</a>
+                <div class="widget-title"><i class="fas fa-chart-line" style="color:#00ff88"></i> QUICK ACCESS</div>
+                <a href="stats.html" class="quick-link"><span>Most Career Runs</span> <i class="fas fa-chevron-right"></i></a>
+                <a href="stats.html" class="quick-link"><span>Highest Batting Avg</span> <i class="fas fa-chevron-right"></i></a>
+                <a href="stats.html" class="quick-link"><span>Most Wickets</span> <i class="fas fa-chevron-right"></i></a>
+                
+                <div style="margin-top:20px;">
+                    <a href="stats.html" style="background:#00ff88; color:#000; padding:12px; width:100%; display:block; text-align:center; font-weight:800; border-radius:4px; text-decoration:none;">OPEN DATABASE</a>
                 </div>
             </div>
 
             <div class="sidebar-widget">
-                <div class="widget-title"><i class="fas fa-trophy" style="color:#ffcc00"></i> ICC TEST RANKINGS</div>
-                <div class="quick-link" style="color:#fff;">1. Joe Root <span style="color:#00ff88; font-weight:bold;">899</span></div>
-                <div class="quick-link" style="color:#fff;">2. Kane Williamson <span style="color:#00ff88; font-weight:bold;">859</span></div>
-                <div class="quick-link" style="color:#fff;">3. Yashasvi Jaiswal <span style="color:#00ff88; font-weight:bold;">820</span></div>
-                <div class="quick-link" style="color:#fff;">4. Steve Smith <span style="color:#00ff88; font-weight:bold;">818</span></div>
+                <div class="widget-title">ICC TEST RANKINGS</div>
+                <div class="quick-link" style="color:#fff;">1. Joe Root <span style="color:#00ff88">899</span></div>
+                <div class="quick-link" style="color:#fff;">2. K. Williamson <span style="color:#00ff88">859</span></div>
+                <div class="quick-link" style="color:#fff;">3. Y. Jaiswal <span style="color:#00ff88">820</span></div>
             </div>
-        </div>
 
+        </div>
     </div>
+
+    <script src="home.js?v=100"></script> 
 
 </body>
 </html>
