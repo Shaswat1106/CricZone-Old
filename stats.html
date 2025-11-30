@@ -3,45 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stats - CricZone</title>
+    <title>Stats Database - CricZone</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <nav class="navbar">
         <a href="index.html">
-            <img src="logo.png" alt="CricZone" class="logo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-            <div class="logo-text" style="display:none; font-weight:bold; font-size:24px; color:white;">CRIC<span style="color:#00ff88">ZONE</span></div>
+            <img src="logo.jpg" alt="CricZone" class="logo-img">
         </a>
         <div class="nav-links">
             <a href="index.html">Home</a>
+            <a href="rankings.html">Rankings</a>
             <a href="stats.html" class="active">Database</a>
         </div>
     </nav>
 
-    <div class="dashboard">
+    <div class="dashboard-wrapper">
         <aside class="sidebar">
-            <div class="menu-cat">Batting</div>
-            <div class="menu-item active" onclick="loadView('runs')">Most Runs</div>
-            <div class="menu-item" onclick="loadView('avg')">Best Average</div>
+            <div class="menu-cat">Batting Records</div>
+            <div class="menu-item active" onclick="loadView('runs')">Most Career Runs</div>
+            <div class="menu-item" onclick="loadView('avg')">Highest Average</div>
             <div class="menu-item" onclick="loadView('sr')">Best Strike Rate</div>
             <div class="menu-item" onclick="loadView('sixes')">Most Sixes</div>
             <div class="menu-item" onclick="loadView('hundreds')">Most Centuries</div>
+            <div class="menu-item" onclick="loadView('fifties')">Most Fifties</div>
 
-            <div class="menu-cat">Bowling</div>
+            <div class="menu-cat">Bowling Records</div>
             <div class="menu-item" onclick="loadView('wickets')">Most Wickets</div>
             <div class="menu-item" onclick="loadView('econ')">Best Economy</div>
         </aside>
 
-        <main class="main-content">
+        <main class="main-stats">
             <h1 id="page-heading" class="page-title">Most Runs</h1>
 
             <div class="filters">
                 <select id="filter-format" onchange="applyFilters()">
-                    <option value="ALL">Overall Career</option>
-                    <option value="ODI">ODI</option>
-                    <option value="T20">T20I</option>
-                    <option value="TEST">Test Match</option>
+                    <option value="ALL">OVERALL CAREER</option>
+                    <option value="ODI">ODI Cricket</option>
+                    <option value="T20">T20 International</option>
+                    <option value="TEST">Test Cricket</option>
                 </select>
 
                 <select id="filter-team" onchange="applyFilters()">
@@ -50,7 +51,9 @@
                     <option value="AUS">Australia</option>
                     <option value="ENG">England</option>
                     <option value="PAK">Pakistan</option>
+                    <option value="SA">South Africa</option>
                 </select>
+                <input type="hidden" id="filter-sort" value="runs">
             </div>
 
             <table>
