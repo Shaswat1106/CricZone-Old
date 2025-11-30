@@ -1,26 +1,31 @@
-/* --- style.css : CRICZONE PRO THEME --- */
+/* --- CRICZONE PRO THEME (FIXED) --- */
 @import url('https://fonts.googleapis.com/css2?family=Teko:wght@400;600&family=Roboto:wght@400;500;700&display=swap');
 
 :root {
-    --bg-body: #09090b;       /* Deep Black */
-    --bg-panel: #141417;      /* Panel Grey */
-    --bg-card: #1c1c1f;       /* Lighter Grey for cards */
-    --accent: #00ff88;        /* Neon Green (Brand Color) */
+    --bg-body: #09090b;       
+    --bg-panel: #141417;      
+    --accent: #00ff88;        
     --text-main: #ffffff;
     --text-muted: #a1a1aa;
     --border: #27272a;
 }
 
-* { box-sizing: border-box; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-body { margin: 0; font-family: 'Roboto', sans-serif; background: var(--bg-body); color: var(--text-main); }
+body { 
+    font-family: 'Roboto', sans-serif; 
+    background-color: var(--bg-body); 
+    color: var(--text-main); 
+    line-height: 1.5;
+}
+
 a { text-decoration: none; color: inherit; }
 
 /* --- NAVBAR --- */
 .navbar {
     background: rgba(9, 9, 11, 0.95);
     height: 70px;
-    padding: 0 30px;
+    padding: 0 20px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -28,25 +33,26 @@ a { text-decoration: none; color: inherit; }
     position: sticky;
     top: 0;
     z-index: 1000;
-    backdrop-filter: blur(10px);
 }
 
 .logo-img {
-    height: 50px; /* Logo Size Fix */
+    height: 45px; 
     width: auto;
-    object-fit: contain;
     display: block;
 }
+
+.nav-links { display: flex; align-items: center; }
 
 .nav-links a {
     color: var(--text-muted);
     font-weight: 600;
-    margin-left: 25px;
+    margin-left: 20px;
     font-size: 14px;
     text-transform: uppercase;
     transition: 0.3s;
 }
 .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+
 .btn-db {
     background: var(--accent);
     color: #000 !important;
@@ -64,8 +70,6 @@ a { text-decoration: none; color: inherit; }
     background: #000;
     border-bottom: 1px solid var(--border);
 }
-.match-strip::-webkit-scrollbar { height: 4px; }
-.match-strip::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
 
 .mini-card {
     min-width: 280px;
@@ -73,30 +77,35 @@ a { text-decoration: none; color: inherit; }
     padding: 15px;
     border-radius: 8px;
     border: 1px solid var(--border);
+    font-size: 13px;
 }
-.mini-card.live { border-left: 4px solid var(--accent); }
+.mini-card.live { border-left: 3px solid var(--accent); }
 
 .main-container {
     max-width: 1200px;
     margin: 20px auto;
     padding: 0 20px;
     display: grid;
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: 2fr 1fr; /* Left bada, Right chota */
     gap: 25px;
 }
 
+/* Content Areas */
 .hero-card {
     background: var(--bg-panel);
     border: 1px solid var(--border);
     border-radius: 12px;
     overflow: hidden;
+    margin-bottom: 20px;
 }
-.hero-img { width: 100%; height: 400px; object-fit: cover; }
+.hero-img { width: 100%; height: 350px; object-fit: cover; display: block; }
 .hero-content { padding: 25px; }
-.news-tag { color: var(--accent); font-weight: bold; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; }
-.headline { font-family: 'Teko', sans-serif; font-size: 36px; line-height: 1; margin: 10px 0; color: #fff; }
-.summary { color: var(--text-muted); line-height: 1.6; }
 
+.news-tag { color: var(--accent); font-weight: bold; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; display: block; margin-bottom: 5px; }
+.headline { font-family: 'Teko', sans-serif; font-size: 32px; line-height: 1.1; margin: 10px 0; color: #fff; }
+.summary { color: var(--text-muted); font-size: 14px; }
+
+/* Sidebar Widgets */
 .sidebar-widget {
     background: var(--bg-panel);
     border: 1px solid var(--border);
@@ -119,16 +128,14 @@ a { text-decoration: none; color: inherit; }
 }
 .quick-link:hover { color: var(--accent); }
 
-/* --- STATS PAGE LAYOUT --- */
-.dashboard-wrapper { display: flex; height: calc(100vh - 70px); }
+/* --- STATS DASHBOARD --- */
+.dashboard-wrapper { display: flex; min-height: 100vh; }
 
 .sidebar {
-    width: 250px;
+    width: 240px;
     background: var(--bg-panel);
     border-right: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto;
+    flex-shrink: 0; /* Sidebar sikudna nahi chahiye */
 }
 
 .menu-cat {
@@ -136,90 +143,80 @@ a { text-decoration: none; color: inherit; }
     font-size: 11px;
     font-weight: 800;
     letter-spacing: 1px;
-    padding: 20px 25px 10px;
+    padding: 20px 20px 10px;
     text-transform: uppercase;
 }
 
 .menu-item {
-    padding: 12px 25px;
+    padding: 10px 20px;
     cursor: pointer;
     color: #e4e4e7;
-    font-size: 14px;
+    font-size: 13px;
     border-left: 3px solid transparent;
-    transition: 0.2s;
 }
 .menu-item:hover { background: #1f1f22; color: #fff; }
 .menu-item.active {
-    background: rgba(0, 255, 136, 0.1);
+    background: rgba(0, 255, 136, 0.05);
     color: var(--accent);
     border-left: 3px solid var(--accent);
 }
 
-.main-stats { flex: 1; padding: 30px; overflow-y: auto; background: var(--bg-body); }
+.main-stats { flex: 1; padding: 20px; overflow-x: auto; }
 
 .page-title {
     font-family: 'Teko', sans-serif;
-    font-size: 42px;
-    margin: 0 0 20px 0;
+    font-size: 36px;
+    margin-bottom: 20px;
     color: #fff;
     text-transform: uppercase;
 }
 
-.filters { display: flex; gap: 15px; margin-bottom: 25px; }
+.filters { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
 select {
     background: #000;
     color: #fff;
     border: 1px solid var(--border);
-    padding: 10px 15px;
-    border-radius: 6px;
+    padding: 8px 12px;
+    border-radius: 4px;
     cursor: pointer;
-    outline: none;
-    font-weight: 500;
 }
-select:focus { border-color: var(--accent); }
 
-/* --- TABLE STYLES --- */
-table { width: 100%; border-collapse: separate; border-spacing: 0 4px; }
+/* --- TABLE --- */
+table { width: 100%; border-collapse: separate; border-spacing: 0; }
 
 thead th {
     text-align: right;
     color: var(--text-muted);
-    font-size: 12px;
+    font-size: 11px;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    padding: 10px 15px;
-    cursor: pointer;
+    padding: 10px;
+    border-bottom: 1px solid var(--border);
 }
 thead th:first-child { text-align: left; }
 
-tbody tr { background: var(--bg-panel); transition: 0.2s; }
-tbody tr:hover { transform: scale(1.005); background: #222; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
-
 tbody td {
-    padding: 16px 15px;
+    padding: 12px 10px;
     text-align: right;
-    font-size: 14px;
-    font-weight: 500;
-    border-bottom: 1px solid var(--bg-body);
+    font-size: 13px;
+    color: #fff;
+    border-bottom: 1px solid #1a1a1a;
 }
-tbody td:first-child { border-radius: 6px 0 0 6px; text-align: left; }
-tbody td:last-child { border-radius: 0 6px 6px 0; }
+tbody td:first-child { text-align: left; color: #fff; font-weight: 600; }
 
-.p-name { display: block; font-weight: 700; color: #fff; font-size: 15px; }
-.p-team { font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-top: 4px; }
-.stat-highlight { color: var(--accent); font-weight: 800; font-size: 16px; }
+.p-name { display: block; font-size: 14px; }
+.p-team { font-size: 10px; color: var(--text-muted); text-transform: uppercase; }
+.stat-highlight { color: var(--accent); font-weight: 700; font-size: 14px; }
 
-/* Badges */
-.badge { padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: 800; }
+.badge { padding: 2px 6px; border-radius: 3px; font-size: 9px; font-weight: bold; display: inline-block; }
 .badge.ODI { background: #3b82f6; color: white; }
 .badge.T20 { background: #f97316; color: white; }
 .badge.TEST { background: #e5e7eb; color: black; }
 .badge.ALL { background: var(--accent); color: black; }
 
-/* Mobile */
+/* --- MOBILE FIX --- */
 @media (max-width: 768px) {
     .main-container { grid-template-columns: 1fr; }
-    .dashboard-wrapper { flex-direction: column; height: auto; }
-    .sidebar { width: 100%; border-right: none; }
-    .hero-img { height: 250px; }
+    .dashboard-wrapper { flex-direction: column; }
+    .sidebar { width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border); }
+    .nav-links a { margin-left: 10px; font-size: 11px; }
 }
