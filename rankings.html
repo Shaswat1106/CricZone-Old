@@ -4,12 +4,10 @@
     <meta charset="UTF-8">
     <title>CricZone - ICC Rankings</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <link rel="stylesheet" href="style.css?v=11">
 </head>
 <body>
 
-    <!-- Navbar -->
     <nav class="navbar">
         <a href="index.html" class="brand-box">
             <img src="logo.jpg" alt="CricZone Logo" class="logo-img">
@@ -17,53 +15,121 @@
         </a>
         <div class="nav-links">
             <a href="index.html">Live Scores</a>
-            <a href="#" class="active">Rankings</a>
+            <a href="rankings.html" class="active">Rankings</a>
             <a href="news.html">News</a>
             <a href="stats.html" class="btn-db">STATS DATABASE ↗</a>
         </div>
     </nav>
 
-    <!-- Main Rankings Container -->
-    <div style="max-width:900px; margin:40px auto; padding:0 20px;">
+    <div style="max-width:980px; margin:40px auto; padding:0 20px;">
+        <h1 style="font-family:'Teko',sans-serif; font-size:44px; margin-bottom:6px;">ICC Rankings</h1>
 
-        <h1 style="color:#fff; font-family:'Teko', sans-serif; font-size:48px;">
-            ICC Rankings
-        </h1>
-
-        <!-- Format Tabs -->
-        <div style="display:flex; gap:15px; margin-top:20px;">
+        <div style="display:flex; gap:12px; margin-top:18px; flex-wrap:wrap;">
             <div class="mini-card format-tab active-tab" onclick="switchFormat('test')">TEST</div>
             <div class="mini-card format-tab" onclick="switchFormat('odi')">ODI</div>
             <div class="mini-card format-tab" onclick="switchFormat('t20')">T20I</div>
         </div>
 
-        <!-- Category Tabs -->
-        <div style="display:flex; gap:15px; margin:20px 0;">
+        <div style="display:flex; gap:12px; margin:18px 0;">
             <div class="mini-card category-tab active-tab" onclick="switchCategory('batsmen')">Batsmen</div>
             <div class="mini-card category-tab" onclick="switchCategory('bowlers')">Bowlers</div>
             <div class="mini-card category-tab" onclick="switchCategory('allrounder')">All-Rounders</div>
         </div>
 
-        <!-- Rankings Data -->
-        <div id="rankings-box">
-            
-            <!-- TEST Batting Default -->
-            <div class="mini-card ranking-card">
-                <h3 style="color:#00ff88; margin-bottom:15px; font-size:20px;">
-                    TEST • Batsmen Rankings
-                </h3>
+        <div id="rankings-box"></div>
+    </div>
 
-                <div class="player-row">
-                    <span>1. Joe Root</span>
-                    <span class="rating">899</span>
-                </div>
+    <script>
+        let selectedFormat = "test";
+        let selectedCategory = "batsmen";
 
-                <div class="player-row">
-                    <span>2. Kane Williamson</span>
-                    <span class="rating">859</span>
-                </div>
+        const data = {
+            test: {
+                batsmen: [
+                    {name: "Joe Root", rating: 899},
+                    {name: "Kane Williamson", rating: 859},
+                    {name: "Yashasvi Jaiswal", rating: 820},
+                ],
+                bowlers: [
+                    {name: "Ravichandran Ashwin", rating: 864},
+                    {name: "Kagiso Rabada", rating: 851},
+                    {name: "Jasprit Bumrah", rating: 842},
+                ],
+                allrounder: [
+                    {name: "Ravindra Jadeja", rating: 444},
+                    {name: "Ben Stokes", rating: 424},
+                    {name: "Ashwin", rating: 401},
+                ]
+            },
+            odi: {
+                batsmen: [
+                    {name: "Babar Azam", rating: 824},
+                    {name: "Shubman Gill", rating: 810},
+                    {name: "Virat Kohli", rating: 778},
+                ],
+                bowlers: [
+                    {name: "Shaheen Afridi", rating: 668},
+                    {name: "Trent Boult", rating: 662},
+                    {name: "Kuldeep Yadav", rating: 650},
+                ],
+                allrounder: [
+                    {name: "Shakib Al Hasan", rating: 372},
+                    {name: "Rashid Khan", rating: 359},
+                    {name: "Hardik Pandya", rating: 335},
+                ]
+            },
+            t20: {
+                batsmen: [
+                    {name: "Suryakumar Yadav", rating: 856},
+                    {name: "Mohammad Rizwan", rating: 787},
+                    {name: "Babar Azam", rating: 778},
+                ],
+                bowlers: [
+                    {name: "Rashid Khan", rating: 710},
+                    {name: "Adil Rashid", rating: 700},
+                    {name: "Adam Zampa", rating: 694},
+                ],
+                allrounder: [
+                    {name: "Shakib Al Hasan", rating: 260},
+                    {name: "Hardik Pandya", rating: 250},
+                    {name: "Mohammad Nabi", rating: 240},
+                ]
+            }
+        };
 
-                <div class="player-row">
-                    <span>3. Yashasvi Jaiswal</span>
-                    <span class="rating">820</span>
-                </div>
+        function switchFormat(format) {
+            selectedFormat = format;
+            updateUI();
+        }
+
+        function switchCategory(cat) {
+            selectedCategory = cat;
+            updateUI();
+        }
+
+        function updateUI() {
+            document.querySelectorAll('.format-tab').forEach(t => t.classList.remove('active-tab'));
+            document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active-tab'));
+
+            document.querySelectorAll('.format-tab').forEach(tab => {
+                if (tab.textContent.trim().toLowerCase() === selectedFormat) tab.classList.add('active-tab');
+            });
+            document.querySelectorAll('.category-tab').forEach(tab => {
+                if (tab.textContent.trim().toLowerCase() === selectedCategory) tab.classList.add('active-tab');
+            });
+
+            const list = data[selectedFormat][selectedCategory];
+            let html = `<div class="mini-card ranking-card"><h3 style="color:var(--accent); margin-bottom:12px;">${selectedFormat.toUpperCase()} • ${selectedCategory[0].toUpperCase()+selectedCategory.slice(1)} Rankings</h3>`;
+            list.forEach((p,i) => {
+                html += `<div class="player-row"><span>${i+1}. ${p.name}</span><span class="rating">${p.rating}</span></div>`;
+            });
+            html += `</div>`;
+            document.getElementById('rankings-box').innerHTML = html;
+        }
+
+        // initial render
+        updateUI();
+    </script>
+
+</body>
+</html>
