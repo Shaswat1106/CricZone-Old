@@ -1,54 +1,62 @@
-/* --- home.js : HORIZONTAL SLIDER + SMART LOGIC --- */
+/* --- home.js : SMART RSS FEED (Logic Fixed) --- */
 
 async function loadLiveScores() {
     const strip = document.querySelector('.match-strip');
-    strip.innerHTML = '<div style="color:#e1b12c; font-weight:bold;">♻️ Syncing Matches...</div>';
+    
+    // Cache todne ke liye timestamp lagaya hai taki purana data na aaye
+    const cacheBuster = new Date().getTime();
+    
+    strip.innerHTML = '<div style="color:#e1b12c; padding:20px; font-weight:bold;">♻️ Refreshing Scores...</div>';
 
     try {
-        // RSS Feed (Free & Fail-Safe)
-        const response = await fetch("https://api.rss2json.com/v1/api.json?rss_url=http://static.cricinfo.com/rss/livescores.xml");
+        // RSS to JSON (Using a robust converter)
+        const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=http://static.cricinfo.com/rss/livescores.xml&api_key=0&t=${cacheBuster}`);
         const json = await response.json();
 
-        if (!json.items) throw new Error("No Data");
+        if (!json.items) {
+            strip.innerHTML = '<div style="color:red; padding:20px;">No Matches Found.</div>';
+            return;
+        }
 
         strip.innerHTML = ""; // Clear Loading
+        
+        // Data Loop
+        const matches = json.items.slice(0, 10);
 
-        json.items.slice(0, 10).forEach(match => {
+        matches.forEach(match => {
+            // Title clean karo
             let title = match.title.replace('&amp;', '&');
-            let description = match.description;
+            let status = match.description; // e.g. "India won by 10 runs"
             
-            // --- LOGIC: Match Live hai ya Khatam? ---
-            let statusLower = description.toLowerCase();
+            // --- SMART LOGIC (Ye hai Sudhaar) ---
+            // Check karo ki match khatam ho gaya hai kya?
+            let statusLower = status.toLowerCase();
             let isFinished = statusLower.includes('won by') || statusLower.includes('drawn') || statusLower.includes('tied') || statusLower.includes('abandoned');
-            let isLive = !isFinished; // Agar khatam nahi hua, to Live maano
-
-            // Colors
+            
+            // Agar khatam nahi hua, tabhi LIVE hai
+            let isLive = !isFinished; 
+            
+            // Colors & Badge set karo
             let borderClass = isLive ? 'live' : '';
-            let statusColor = isLive ? '#00ff88' : '#3b94fd'; // Green for Live, Blue for Result
-            let badgeHTML = isLive ? '<span class="blink-dot"></span> LIVE' : '<span style="color:#aaa">RESULT</span>';
+            let statusColor = isLive ? '#00ff88' : '#3b94fd'; // Live = Green, Result = Blue
+            let liveBadge = isLive ? '<span class="blink-dot"></span> LIVE' : 'RESULT';
+            let badgeColor = isLive ? '#ff4444' : '#aaa'; // Badge: Red for Live, Grey for Result
 
-            // Teams Parse
-            let parts = title.split(' v ');
-            let t1 = parts[0] || "Team A";
-            let t2 = parts[1] || "Team B";
-
-            // HTML CARD (Horizontal Wala)
             let card = `
             <div class="mini-card ${borderClass}">
-                <div style="display:flex; justify-content:space-between; margin-bottom:8px; border-bottom:1px solid #27272a; padding-bottom:5px;">
-                    <span style="font-size:10px; color:#888; font-weight:bold;">MATCH CENTER</span>
-                    <span class="live-badge">${badgeHTML}</span>
+                <div style="display:flex; justify-content:space-between; margin-bottom:10px; border-bottom:1px solid #333; padding-bottom:5px;">
+                    <span style="font-size:10px; color:#aaa; font-weight:bold; text-transform:uppercase;">MATCH CENTER</span>
+                    <span style="font-size:10px; color:${badgeColor}; font-weight:bold;">
+                        ${liveBadge}
+                    </span>
                 </div>
                 
-                <div style="display:flex; justify-content:space-between; margin-top:5px; font-weight:bold; font-size:13px;">
-                    <span style="color:#fff;">${t1}</span>
-                </div>
-                <div style="display:flex; justify-content:space-between; margin-top:5px; font-weight:bold; font-size:13px;">
-                    <span style="color:#fff;">${t2}</span>
+                <div style="margin-top:5px; font-weight:bold; font-size:13px; color:#fff; line-height:1.4;">
+                    ${title}
                 </div>
 
                 <span style="font-size:11px; color:${statusColor}; display:block; margin-top:10px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
-                    ${description}
+                    ${status}
                 </span>
             </div>`;
             
@@ -57,24 +65,26 @@ async function loadLiveScores() {
 
     } catch (error) {
         console.error(error);
-        strip.innerHTML = '<div style="color:red;">Feed Error.</div>';
+        strip.innerHTML = '<div style="color:red; padding:20px;">Feed Error. Try Refreshing.</div>';
     }
 }
 
-// News Loader
+// News Section (Same as before)
 function loadNews() {
     const container = document.getElementById('news-container');
     if(!container) return;
     
+    // Filhal Static News (Baad me Google Sheet se jod lena)
     container.innerHTML = `
     <div class="hero-card">
         <img src="https://img1.hscicdn.com/image/upload/f_auto,t_ds_w_1200,q_50/lsci/db/PICTURES/CMS/370500/370560.jpg" class="hero-img">
         <div class="hero-content">
-            <span class="news-tag">BORDER-GAVASKAR TROPHY</span>
+            <span class="news-tag">TOP STORY</span>
             <h1 class="headline">King Kohli Silences Critics with Majestic 80th Century</h1>
             <p class="summary">Virat Kohli produced a masterclass on a spicy Perth wicket, guiding India to a commanding position on Day 2 against Australia.</p>
         </div>
     </div>
+    
     <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:20px;">
         <div class="hero-card" style="padding:20px;">
             <span class="news-tag">IPL 2025</span>
