@@ -1,69 +1,60 @@
 /* --- home.js : FINAL FAIL-SAFE SYSTEM --- */
 
-function getUpcomingMatches() {
+function getDemoMatches() {
     return [
-        { title: "IPL 2025 • CSK vs MI", description: "Tomorrow • 7:30 PM IST", status: "UPCOMING", matchStarted: false, matchEnded: false, series: "IPL 2025" },
-        { title: "Big Bash League • Final", description: "Sydney Thunder won by 5 runs", status: "RESULT", matchStarted: true, matchEnded: true, series: "BBL" },
-        { title: "U19 World Cup • India U19 vs Pak U19", description: "Tomorrow • Day 1", status: "UPCOMING", matchStarted: false, matchEnded: false, series: "U19 WC" }
+        { name: "IND 320/4 v AUS 177", series: "BGT 1st Test", description: "India lead by 143 runs", status: "LIVE" },
+        { name: "SA 287/8 v ENG 240", series: "2nd ODI", description: "South Africa won by 47 runs", status: "RESULT" },
+        { name: "IPL 2025 • CSK v MI", series: "UPCOMING", description: "Match starts tomorrow at 7:30 PM", status: "UPCOMING" }
     ];
 }
 
 async function loadLiveScores() {
     const strip = document.querySelector('.match-strip');
-    strip.innerHTML = '<div style="color:#e1b12c; padding:20px; font-weight:bold;">♻️ Checking Global Feeds...</div>';
+    strip.innerHTML = '<div style="color:#e1b12c; padding:20px; font-weight:bold;">📡 Connecting to Feed...</div>';
 
     try {
-        // RSS Feed Try Karo
+        // RSS Feed (Fastest Free Source)
         const response = await fetch("https://api.rss2json.com/v1/api.json?rss_url=http://static.cricinfo.com/rss/livescores.xml");
         const json = await response.json();
 
-        if (!json.items || json.items.length === 0) {
-            // Agar API se kuch na mile, to Demo dikhao
-            renderCards(getUpcomingMatches(), strip);
-            return; 
+        if (json.items && json.items.length > 0) {
+            renderCards(json.items.slice(0, 10), strip);
+        } else {
+            // API se kuch nahi aaya, to Demo dikhao
+            renderCards(getDemoMatches(), strip); 
         }
-        
-        // Agar data mil gaya to render karo
-        renderCards(json.items.slice(0, 10), strip, true);
 
     } catch (error) {
-        // Agar Fetching fail ho to bhi Demo dikhao
-        renderCards(getUpcomingMatches(), strip, false);
+        // Error aane par bhi Demo dikhao (Never leave it blank)
+        renderCards(getDemoMatches(), strip);
     }
 }
 
-// Card Renderer Logic
-function renderCards(matches, container, isApiData) {
+function renderCards(matches, container) {
     container.innerHTML = "";
-
     matches.forEach(match => {
         let title = match.title ? match.title.replace('&amp;', '&') : match.series || "Match";
         let description = match.description || match.status;
 
-        // Status Logic (Check ki match khatam hua ya nahi)
+        // Logic
         let statusLower = description.toLowerCase();
-        let isFinished = statusLower.includes('won by') || statusLower.includes('tied') || statusLower.includes('result') || statusLower.includes('no result');
-        let isLive = !isFinished && statusLower.includes('live'); // Only LIVE if status says 'live' and not finished
-
+        let isFinished = statusLower.includes('won by') || statusLower.includes('tied') || statusLower.includes('result');
+        let isLive = !isFinished && statusLower.includes('live');
+        
         let borderClass = isLive ? 'live' : '';
-        let statusColor = isLive ? '#00ff88' : (isFinished ? '#3b94fd' : '#aaa'); 
+        let statusColor = isLive ? '#00ff88' : '#3b94fd'; 
         let badgeText = isLive ? 'LIVE' : (isFinished ? 'RESULT' : 'UPDATE');
         
-        // Agar API nahi chali to series name me demo tag lagao
-        let seriesTag = isApiData ? (match.series || 'MATCH CENTER') : 'DEMO SCHEDULE';
-
-
+        // Final Card HTML (Horizontal Slider Style)
         let card = `
         <div class="mini-card ${borderClass}">
             <div style="display:flex; justify-content:space-between; margin-bottom:8px; border-bottom:1px solid #27272a; padding-bottom:5px;">
-                <span style="font-size:10px; color:#aaa; font-weight:bold; text-transform:uppercase;">${seriesTag}</span>
-                <span style="font-size:10px; color:${isLive ? '#ff4444' : '#aaa'}; font-weight:bold;">${badgeText}</span>
+                <span style="font-size:10px; color:#aaa; font-weight:bold;">MATCH CENTER</span>
+                <span style="font-size:10px; color:${isLive ? '#ff4444' : '#ccc'}; font-weight:bold;">${badgeText}</span>
             </div>
             
-            <div style="margin-top:5px; font-weight:bold; font-size:13px; color:#fff; line-height:1.4;">
-                ${title}
-            </div>
-
+            <div style="margin-top:5px; font-weight:bold; font-size:13px; color:#fff; line-height:1.4;">${title}</div>
+            
             <span style="font-size:11px; color:${statusColor}; display:block; margin-top:10px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
                 ${description}
             </span>
@@ -73,14 +64,14 @@ function renderCards(matches, container, isApiData) {
     });
 }
 
-// News Loader (Same as before)
 function loadNews() {
     const container = document.getElementById('news-container');
     if(!container) return;
     
+    // News Section Structure (Static Demo)
     container.innerHTML = `
     <div class="hero-card">
-        <img src="https://img1.hscicdn.com/image/upload/f_auto,t_ds_w_1200,q_50/lsci/db/PICTURES/CMS/370500/370560.jpg" class="hero-img">
+        <img src="https://img1.hscicdn.com/image/upload/f_auto,t_ds_w_1200,q_50/lsci/db/PICTURES/CMS/370500/370560.jpg" class="hero-img-large">
         <div class="hero-content">
             <span class="news-tag">TOP STORY</span>
             <h1 class="headline">King Kohli Silences Critics with Majestic 80th Century</h1>
@@ -101,6 +92,6 @@ function loadNews() {
 }
 
 window.onload = function() {
-    loadNews();
+    loadNews(); 
     loadLiveScores(); 
 };
