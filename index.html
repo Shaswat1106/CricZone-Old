@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>CricZone - Live Cricket</title>
 
-    <link rel="stylesheet" href="style.css?v=11">
+    <link rel="stylesheet" href="style.css?v=999">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
@@ -17,36 +17,27 @@
         </a>
 
         <div class="nav-links">
-            <a href="index.html" class="active">Live Scores</a>
+            <a href="#" class="active">Live Scores</a>
             <a href="rankings.html">Rankings</a>
-            <a href="news.html">News</a>
+            <a href="#">News</a>
             <a href="stats.html" class="btn-db">STATS DATABASE ↗</a>
         </div>
     </nav>
 
-    <!-- Live Feed / Match Strip -->
-    <div class="match-strip" id="match-strip">
-        <div class="mini-card" id="feed-loader">
-            <div style="color:#e1b12c; padding:12px 18px; font-weight:bold;">♻️ Connecting to Feed...</div>
-        </div>
+    <div class="match-strip">
+        <div style="color:#e1b12c; padding:20px; font-weight:bold;">♻️ Connecting to Feed...</div>
     </div>
 
-    <!-- Main content -->
     <div class="main-container">
-        <!-- left column: news / feed -->
-        <div class="content-left" id="news-container">
-            <!-- News + hero will be injected by home.js -->
-        </div>
+        <div class="content-left" id="news-container"></div>
 
-        <!-- right column: widgets -->
         <div class="content-right">
-
             <div class="sidebar-widget">
                 <div class="widget-title"><i class="fas fa-chart-line" style="color:var(--accent)"></i> QUICK ACCESS</div>
                 <a href="stats.html" class="quick-link"><span>Most Career Runs</span> <i class="fas fa-chevron-right"></i></a>
                 <a href="stats.html" class="quick-link"><span>Highest Batting Avg</span> <i class="fas fa-chevron-right"></i></a>
                 <a href="stats.html" class="quick-link"><span>Most Wickets</span> <i class="fas fa-chevron-right"></i></a>
-
+                
                 <div style="margin-top:20px;">
                     <a href="stats.html" class="btn-db" style="display:block; text-align:center; text-decoration:none;">OPEN DATABASE</a>
                 </div>
@@ -58,10 +49,10 @@
                 <div class="quick-link" style="color:#fff;">2. K. Williamson <span style="color:var(--accent)">859</span></div>
                 <div class="quick-link" style="color:#fff;">3. Y. Jaiswal <span style="color:var(--accent)">820</span></div>
             </div>
-
         </div>
     </div>
 
-    <script src="home.js?v=101"></script>
+    <script src="home.js?v=999"></script> 
+
 </body>
 </html>
