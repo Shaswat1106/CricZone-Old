@@ -1,120 +1,106 @@
-/* home.js - CricZone live + news (fallback ready) */
-
-/*
-  Notes:
-  - The code first attempts to load an RSS->JSON feed (free RSS->JSON used as demo).
-  - If the feed fails or is empty, fallback mock matches are rendered.
-  - You can replace the feed URL / logic with a proper cricket API later.
-*/
+/* --- home.js : FINAL FAIL-SAFE SYSTEM --- */
 
 function getUpcomingMatches() {
     return [
-        { title: "IPL 2025 • CSK vs MI", description: "Tomorrow • 7:30 PM IST", series: "IPL 2025", status: "UPCOMING" },
-        { title: "Big Bash League • Final", description: "Sydney Thunder won by 5 runs", series: "BBL", status: "RESULT" },
-        { title: "U19 World Cup • India U19 vs Pak U19", description: "Tomorrow • Day 1", series: "U19 WC", status: "UPCOMING" }
+        { title: "IPL 2025 • CSK vs MI", description: "Tomorrow • 7:30 PM IST", status: "UPCOMING", matchStarted: false, matchEnded: false, series: "IPL 2025" },
+        { title: "Big Bash League • Final", description: "Sydney Thunder won by 5 runs", status: "RESULT", matchStarted: true, matchEnded: true, series: "BBL" },
+        { title: "U19 World Cup • India U19 vs Pak U19", description: "Tomorrow • Day 1", status: "UPCOMING", matchStarted: false, matchEnded: false, series: "U19 WC" }
     ];
 }
 
-function renderCards(matches, containerEl) {
-    if (!containerEl) return;
-    containerEl.innerHTML = "";
-    matches.forEach(match => {
-        const title = match.title || match.series || "Match";
-        const description = match.description || match.status || "";
-        const statusText = (description || "").toLowerCase();
-        const isFinished = statusText.includes('won by') || statusText.includes('result') || statusText.includes('draw');
-        const isLive = !isFinished && statusText.includes('live');
-        const card = document.createElement('div');
-        card.className = `mini-card ${isLive ? 'live' : ''}`;
-        card.innerHTML = `
-            <div style="display:flex; justify-content:space-between; margin-bottom:6px; border-bottom:1px solid #27272a; padding-bottom:6px;">
-                <span style="font-size:11px; color:#a1a1aa; font-weight:700; text-transform:uppercase;">${match.series || 'CRICKET'}</span>
-                <span style="font-size:12px; color:${isLive ? '#ff6b6b' : '#a1a1aa'}">${isLive ? '<span class="blink-dot"></span> LIVE' : (isFinished ? 'RESULT' : 'UPDATE')}</span>
-            </div>
-            <div style="font-weight:700; color:#fff; font-size:14px; line-height:1.4;">${title}</div>
-            <div style="color:${isLive ? '#00ff88' : '#a1a1aa'}; margin-top:8px; font-size:13px;">${description}</div>
-        `;
-        containerEl.appendChild(card);
-    });
-}
-
 async function loadLiveScores() {
-    const strip = document.getElementById('match-strip');
-    const loader = document.getElementById('feed-loader');
-
-    // show temporary loader
-    if (loader) loader.innerHTML = `<div style="color:var(--accent); padding:12px 18px; font-weight:700;">♻️ Checking Global Feeds...</div>`;
-
-    // Example: a free RSS->JSON proxy; replace with a true cricket API later
-    const rssProxy = "https://api.rss2json.com/v1/api.json?rss_url=http://static.cricinfo.com/rss/livescores.xml";
+    const strip = document.querySelector('.match-strip');
+    strip.innerHTML = '<div style="color:#e1b12c; padding:20px; font-weight:bold;">♻️ Checking Global Feeds...</div>';
 
     try {
-        const res = await fetch(rssProxy, { cache: "no-store" });
-        if (!res.ok) throw new Error('Feed not OK');
-        const data = await res.json();
+        // RSS Feed Try Karo
+        const response = await fetch("https://api.rss2json.com/v1/api.json?rss_url=http://static.cricinfo.com/rss/livescores.xml");
+        const json = await response.json();
 
-        // items may be present in data.items; use slice for top results
-        if (data && Array.isArray(data.items) && data.items.length > 0) {
-            // map items to our card format
-            const items = data.items.slice(0, 8).map(it => ({
-                title: it.title,
-                description: it.description || it.pubDate || '',
-                series: it.author || 'Live'
-            }));
-            // clear strip and render
-            strip.innerHTML = "";
-            renderCards(items, strip);
-            return;
+        if (!json.items || json.items.length === 0) {
+            // Agar API se kuch na mile, to Demo dikhao
+            renderCards(getUpcomingMatches(), strip);
+            return; 
         }
+        
+        // Agar data mil gaya to render karo
+        renderCards(json.items.slice(0, 10), strip, true);
 
-        // fallback
-        strip.innerHTML = "";
-        renderCards(getUpcomingMatches(), strip);
-    } catch (err) {
-        console.warn('Live feed error:', err);
-        strip.innerHTML = "";
-        renderCards(getUpcomingMatches(), strip);
+    } catch (error) {
+        // Agar Fetching fail ho to bhi Demo dikhao
+        renderCards(getUpcomingMatches(), strip, false);
     }
 }
 
-function loadNews() {
-    const left = document.getElementById('news-container');
-    if (!left) return;
+// Card Renderer Logic
+function renderCards(matches, container, isApiData) {
+    container.innerHTML = "";
 
-    left.innerHTML = `
-        <div class="hero-news">
-            <img class="hero-img-large" src="https://img1.hscicdn.com/image/upload/f_auto,t_ds_w_1200,q_50/lsci/db/PICTURES/CMS/370500/370560.jpg" alt="hero">
-            <div class="hero-content">
-                <div class="news-tag">BORDER GAVASKAR TROPHY</div>
-                <h2 class="hero-title">King Kohli's Masterclass: A Century to Remember in Perth</h2>
-                <p class="hero-desc">Virat Kohli silenced his critics with a magnificent century, guiding India to a commanding position on Day 2 of the first Test.</p>
+    matches.forEach(match => {
+        let title = match.title ? match.title.replace('&amp;', '&') : match.series || "Match";
+        let description = match.description || match.status;
+
+        // Status Logic (Check ki match khatam hua ya nahi)
+        let statusLower = description.toLowerCase();
+        let isFinished = statusLower.includes('won by') || statusLower.includes('tied') || statusLower.includes('result') || statusLower.includes('no result');
+        let isLive = !isFinished && statusLower.includes('live'); // Only LIVE if status says 'live' and not finished
+
+        let borderClass = isLive ? 'live' : '';
+        let statusColor = isLive ? '#00ff88' : (isFinished ? '#3b94fd' : '#aaa'); 
+        let badgeText = isLive ? 'LIVE' : (isFinished ? 'RESULT' : 'UPDATE');
+        
+        // Agar API nahi chali to series name me demo tag lagao
+        let seriesTag = isApiData ? (match.series || 'MATCH CENTER') : 'DEMO SCHEDULE';
+
+
+        let card = `
+        <div class="mini-card ${borderClass}">
+            <div style="display:flex; justify-content:space-between; margin-bottom:8px; border-bottom:1px solid #27272a; padding-bottom:5px;">
+                <span style="font-size:10px; color:#aaa; font-weight:bold; text-transform:uppercase;">${seriesTag}</span>
+                <span style="font-size:10px; color:${isLive ? '#ff4444' : '#aaa'}; font-weight:bold;">${badgeText}</span>
             </div>
-        </div>
-
-        <div class="section-heading">LATEST STORIES</div>
-
-        <div class="news-item">
-            <img class="news-thumb" src="https://img1.hscicdn.com/image/upload/f_auto,t_ds_w_1280,q_80/lsci/db/PICTURES/CMS/370400/370489.jpg" alt="thumb">
-            <div class="news-info">
-                <h2>Rishabh Pant Shatters Records: Sold for ₹27 Cr</h2>
-                <div class="news-meta">2 Hours Ago • IPL 2025</div>
+            
+            <div style="margin-top:5px; font-weight:bold; font-size:13px; color:#fff; line-height:1.4;">
+                ${title}
             </div>
-        </div>
 
-        <div class="news-item">
-            <img class="news-thumb" src="https://img1.hscicdn.com/image/upload/f_auto,t_ds_w_1280,q_80/lsci/db/PICTURES/CMS/353400/353429.jpg" alt="thumb">
-            <div class="news-info">
-                <h2>Why Bumrah is the best captain India never had</h2>
-                <div class="news-meta">5 Hours Ago • Analysis</div>
-            </div>
-        </div>
-    `;
+            <span style="font-size:11px; color:${statusColor}; display:block; margin-top:10px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                ${description}
+            </span>
+        </div>`;
+        
+        container.innerHTML += card;
+    });
 }
 
-window.addEventListener('load', function () {
-    loadNews();
-    loadLiveScores();
+// News Loader (Same as before)
+function loadNews() {
+    const container = document.getElementById('news-container');
+    if(!container) return;
+    
+    container.innerHTML = `
+    <div class="hero-card">
+        <img src="https://img1.hscicdn.com/image/upload/f_auto,t_ds_w_1200,q_50/lsci/db/PICTURES/CMS/370500/370560.jpg" class="hero-img">
+        <div class="hero-content">
+            <span class="news-tag">TOP STORY</span>
+            <h1 class="headline">King Kohli Silences Critics with Majestic 80th Century</h1>
+            <p class="summary">Virat Kohli produced a masterclass on a spicy Perth wicket, guiding India to a commanding position on Day 2 against Australia.</p>
+        </div>
+    </div>
+    
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:20px;">
+        <div class="hero-card" style="padding:20px;">
+            <span class="news-tag">IPL 2025</span>
+            <h3 style="margin:10px 0; color:#fff; font-size:20px; font-family:'Teko'">Rishabh Pant sold for record ₹27 Crores</h3>
+        </div>
+        <div class="hero-card" style="padding:20px;">
+            <span class="news-tag">ANALYSIS</span>
+            <h3 style="margin:10px 0; color:#fff; font-size:20px; font-family:'Teko'">Why Bumrah is the tactical genius India needs</h3>
+        </div>
+    </div>`;
+}
 
-    // auto refresh live scores every 60 seconds (safe default)
-    setInterval(loadLiveScores, 60 * 1000);
-});
+window.onload = function() {
+    loadNews();
+    loadLiveScores(); 
+};
