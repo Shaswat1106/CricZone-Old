@@ -1,62 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stats Database - CricZone</title>
-    <link rel="stylesheet" href="style.css?v=11">
+    <link rel="stylesheet" href="style.css?v=999">
+    
+    <style>
+        .table-responsive { width: 100%; overflow-x: auto; }
+        table { width: 100%; border-collapse: separate; border-spacing: 0 4px; min-width: 900px; }
+        thead th { background: #1a1a1a; color: #a1a1aa; padding: 12px 15px; text-align: right; border-bottom: 2px solid #333; font-size: 12px; }
+        thead th:first-child { text-align: left; }
+        tbody tr { background: #141417; transition: transform 0.2s; }
+        tbody tr:hover { background: #222; }
+        tbody td { padding: 12px 15px; text-align: right; color: #fff; border-bottom: 1px solid #1a1a1a; }
+        tbody td:first-child { text-align: left; font-weight: bold; border-left: 3px solid transparent; }
+        tbody tr:hover td:first-child { border-left: 3px solid var(--accent); }
+    </style>
 </head>
 <body>
 
     <nav class="navbar">
         <a href="index.html" class="brand-box">
-            <img src="logo.jpg" alt="CricZone Logo" class="logo-img">
+            <img src="logo.jpg" alt="Logo" class="logo-img">
             <div class="brand-name">CRIC<span>ZONE</span></div>
         </a>
         <div class="nav-links">
-            <a href="index.html">Live Scores</a>
+            <a href="index.html">Home</a>
             <a href="rankings.html">Rankings</a>
-            <a href="stats.html" class="active">Stats Database</a>
+            <a href="stats.html" class="active">Database</a>
         </div>
     </nav>
 
-    <div style="max-width:1100px; margin:30px auto; padding:0 20px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
-            <h1 id="page-heading" style="font-family:'Teko',sans-serif; font-size:34px; margin-bottom:6px;">Most Career Runs</h1>
+    <div class="dashboard-wrapper">
+        <aside class="sidebar">
+            <div class="menu-cat">Batting Records</div>
+            <div class="menu-item active" onclick="loadView('runs')">Most Career Runs</div>
+            <div class="menu-item" onclick="loadView('avg')">Highest Average</div>
+            <div class="menu-item" onclick="loadView('sr')">Best Strike Rate</div>
+            <div class="menu-item" onclick="loadView('sixes')">Most Sixes</div>
+            <div class="menu-item" onclick="loadView('hundreds')">Most Centuries</div>
+            <div class="menu-item" onclick="loadView('fifties')">Most Fifties</div>
 
-            <div style="display:flex; gap:10px; align-items:center;">
-                <select id="filter-format" onchange="applyFilters()" style="padding:8px; border-radius:6px; background:var(--bg-panel); color:#fff; border:1px solid #222;">
-                    <option value="ALL">All Formats</option>
-                    <option value="TEST">TEST</option>
-                    <option value="ODI">ODI</option>
-                    <option value="T20">T20</option>
+            <div class="menu-cat">Bowling Records</div>
+            <div class="menu-item" onclick="loadView('wickets')">Most Wickets</div>
+            <div class="menu-item" onclick="loadView('econ')">Best Economy</div>
+        </aside>
+
+        <main class="main-stats">
+            <h1 id="page-heading" class="page-title">Most Runs</h1>
+
+            <div class="filters">
+                <select id="filter-format" onchange="applyFilters()">
+                    <option value="ALL">OVERALL CAREER</option>
+                    <option value="ODI">ODI Cricket</option>
+                    <option value="T20">T20 International</option>
+                    <option value="TEST">Test Cricket</option>
                 </select>
 
-                <select id="filter-team" onchange="applyFilters()" style="padding:8px; border-radius:6px; background:var(--bg-panel); color:#fff; border:1px solid #222;">
+                <select id="filter-team" onchange="applyFilters()">
                     <option value="ALL">All Teams</option>
-                    <option value="India">India</option>
-                    <option value="England">England</option>
-                    <option value="Australia">Australia</option>
+                    <option value="IND">India</option>
+                    <option value="AUS">Australia</option>
+                    <option value="ENG">England</option>
                 </select>
-
-                <div style="display:flex; gap:6px;">
-                    <div class="menu-item mini-card active-tab" onclick="loadView('runs')">Runs</div>
-                    <div class="menu-item mini-card" onclick="loadView('wickets')">Wkts</div>
-                    <div class="menu-item mini-card" onclick="loadView('avg')">Avg</div>
-                </div>
+                <input type="hidden" id="filter-sort" value="runs">
             </div>
-        </div>
 
-        <div style="margin-top:18px;">
-            <div class="mini-card" style="padding:0; overflow:auto;">
-                <table class="table" style="min-width:900px;">
+            <div class="table-responsive">
+                <table>
                     <thead id="stats-head"></thead>
                     <tbody id="stats-body"></tbody>
                 </table>
             </div>
-        </div>
+        </main>
     </div>
 
-    <script src="logic.js?v=101"></script>
+    <script src="logic.js?v=999"></script>
 </body>
 </html>
